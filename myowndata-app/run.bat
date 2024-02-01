@@ -1,1 +1,1 @@
-flutter run --release --web-renderer html  -d web-server
+flutter run --release --web-renderer html  -d web-server --web-port=3000
