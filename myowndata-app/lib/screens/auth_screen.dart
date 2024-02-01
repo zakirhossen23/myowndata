@@ -10,6 +10,7 @@ import 'package:myowndata/components/register_modal.dart';
 import 'package:myowndata/screens/get_ready.dart';
 import 'package:myowndata/screens/study_id_screen.dart';
 import 'package:myowndata/screens/main_screen.dart';
+import 'package:myowndata/model/airtable_api.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -45,18 +46,14 @@ class AuthScreenApp extends State<AuthScreen> {
   }
 
   Future<void> LoginAccount() async {
-    var url = Uri.parse('http://localhost:8080/api/POST/Login');
+    final usersTable = base('users');
+    var filterByFormula =
+        'AND({email} = \'${emailTXT.text}\', {password} = \'${passwordTXT.text}\'';
+    final records = await usersTable.select(filterBy: filterByFormula);
 
-    ///Hard Coded
-    final response = await http.post(url,
-        headers: POSTheader,
-        body: {'email': emailTXT.text, 'password': passwordTXT.text});
-    var responseData = json.decode(response.body);
-    var data = (responseData['value']);
+    if ((records.isNotEmpty)) {
+      var userid = records[0]['id'];
 
-    if (data != "False") {
-      var userid = data;
-      // Obtain shared preferences.
       final prefs = await SharedPreferences.getInstance();
 
       prefs.setString("userid", userid);
