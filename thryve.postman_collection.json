@@ -1,0 +1,982 @@
+{
+	"info": {
+		"_postman_id": "73f43100-001a-46b3-89a5-222f0b030c9f",
+		"name": "Thryve Postman Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "accessToken",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "partnerUserID",
+							"value": "myuser001",
+							"type": "text"
+						},
+						{
+							"key": "language",
+							"value": "en",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/accessToken",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"accessToken"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dataSourceURL",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "authenticationToken",
+							"value": "de3d1e068537dd927b48988cb6969abe",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/dataSourceURL",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"dataSourceURL"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dynamicEpochValues",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "authenticationToken",
+							"value": "de3d1e068537dd927b48988cb6969abe",
+							"type": "text"
+						},
+						{
+							"key": "startTimestamp",
+							"value": "2020-02-28T00:00:00+01:00",
+							"type": "text"
+						},
+						{
+							"key": "endTimestamp",
+							"value": "2020-03-01T00:00:00+01:00",
+							"type": "text"
+						},
+						{
+							"key": "startTimestampUnix",
+							"value": "1581033600000",
+							"type": "text"
+						},
+						{
+							"key": "endTimestampUnix",
+							"value": "1581034080000",
+							"type": "text"
+						},
+						{
+							"key": "dataSources",
+							"value": "8",
+							"type": "text"
+						},
+						{
+							"key": "valueTypes",
+							"value": "1000,1200",
+							"type": "text"
+						},
+						{
+							"key": "detailed",
+							"value": "true",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/dynamicEpochValues",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"dynamicEpochValues"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dailyDynamicValues",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "authenticationToken",
+							"value": "de3d1e068537dd927b48988cb6969abe",
+							"type": "text"
+						},
+						{
+							"key": "startDay",
+							"value": "2020-02-28",
+							"type": "text"
+						},
+						{
+							"key": "endDay",
+							"value": "2020-03-01",
+							"type": "text"
+						},
+						{
+							"key": "startTimestampUnix",
+							"value": "1581033600000",
+							"type": "text"
+						},
+						{
+							"key": "endTimestampUnix",
+							"value": "1581034080000",
+							"type": "text"
+						},
+						{
+							"key": "dataSources",
+							"value": "8",
+							"type": "text"
+						},
+						{
+							"key": "valueTypes",
+							"value": "1000,1200",
+							"type": "text"
+						},
+						{
+							"key": "detailed",
+							"value": "true",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/dailyDynamicValues",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"dailyDynamicValues"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "linearAnalysis",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "authenticationToken",
+							"value": "de3d1e068537dd927b48988cb6969abe",
+							"type": "text"
+						},
+						{
+							"key": "startDay",
+							"value": "2020-01-06",
+							"type": "text"
+						},
+						{
+							"key": "endDay",
+							"value": "2020-02-08",
+							"type": "text"
+						},
+						{
+							"key": "startTimestampUnix",
+							"value": "1579961502000",
+							"type": "text"
+						},
+						{
+							"key": "endTimestampUnix",
+							"value": "1582639902000",
+							"type": "text"
+						},
+						{
+							"key": "valueType",
+							"value": "2201",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/linearAnalysis",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"linearAnalysis"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "weeklyRhythmHeatmap",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "authenticationToken",
+							"value": "de3d1e068537dd927b48988cb6969abe",
+							"type": "text"
+						},
+						{
+							"key": "startDay",
+							"value": "2020-01-06",
+							"type": "text"
+						},
+						{
+							"key": "endDay",
+							"value": "2020-02-08",
+							"type": "text"
+						},
+						{
+							"key": "startTimestampUnix",
+							"value": "1579961502000",
+							"type": "text"
+						},
+						{
+							"key": "endTimestampUnix",
+							"value": "1582639902000",
+							"type": "text"
+						},
+						{
+							"key": "valueType",
+							"value": "22301",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/weeklyRhythmHeatmap",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"weeklyRhythmHeatmap"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UserInformation: Retrieval",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "authenticationToken",
+							"value": "de3d1e068537dd927b48988cb6969abe,es2d34edsa537ddfds2b6888asdeb5921be",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/userInformation",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"userInformation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UserInformation: Deletion",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "authenticationToken",
+							"value": "de3d1e068537dd927b48988cb6969abe,es2d34edsa537ddfds2b6888asdeb5921be",
+							"type": "text"
+						},
+						{
+							"key": "deletionDate",
+							"value": "2020-09-09T10:00:00+01:00",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/userInformation",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"userInformation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dataAvailability",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "authenticationToken",
+							"value": "de3d1e068537dd927b48988cb6969abe,es2d34edsa537ddfds2b6888asdeb5921be",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/dataAvailability",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"dataAvailability"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "initiateDataRetrieval",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "authenticationToken",
+						"type": "text",
+						"value": "de3d1e068537dd927b48988cb6969abe"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/initiateDataRetrieval",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"initiateDataRetrieval"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "environmentalData",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "authenticationToken",
+							"value": "de3d1e068537dd927b48988cb6969abe",
+							"type": "text"
+						},
+						{
+							"key": "startDay",
+							"value": "2020-02-01",
+							"type": "text"
+						},
+						{
+							"key": "endDay",
+							"value": "2020-02-28",
+							"type": "text"
+						},
+						{
+							"key": "startTimestampUnix",
+							"value": "1580774400000",
+							"type": "text"
+						},
+						{
+							"key": "endTimestampUnix",
+							"value": "1580860800000",
+							"type": "text"
+						},
+						{
+							"key": "latitude",
+							"value": "52.13333",
+							"type": "text"
+						},
+						{
+							"key": "longitude",
+							"value": "11.13333",
+							"type": "text"
+						},
+						{
+							"key": "valueTypes",
+							"value": "100,104",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/environmentalData",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"environmentalData"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Back Channel: dailyDynamicValues Upload",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "authenticationToken",
+						"type": "text",
+						"value": "de3d1e068537dd927b48988cb6969abe"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"data\": [\n    {\n      \"day\": \"2020-01-01\",\n      \"dayTimeUnix\": \"1578485700000\",\n      \"dailyDynamicValueType\": 5020,\n      \"value\": 91.7\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/dailyDynamicValues",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"dailyDynamicValues"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Back Channel: constantValue Upload",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "authenticationToken",
+						"type": "text",
+						"value": "de3d1e068537dd927b48988cb6969abe"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"data\": [\n    {\n      \"dailyDynamicValueType\": 9050,\n      \"value\": 2\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/constantValue",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"constantValue"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Back Channel: UserInfo Upload",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "A7qmaxf9a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "healthapp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "AppAuthorization",
+						"type": "text",
+						"value": "Basic RkVoOUhRTmFhODdjd2RiQjpOTDduVGVnUG01REt0OExyQlpQNjJIUXo2Vk5aYUd1TQ"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "authenticationToken",
+						"type": "text",
+						"value": "de3d1e068537dd927b48988cb6969abe"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"height\": 192,\n\t\"weight\": 91.7,\n\t\"birthdate\": \"1991-07-07\",\n\t\"gender\": \"genderless\"\n} "
+				},
+				"url": {
+					"raw": "https://api.und-gesund.de/v5/userInformation",
+					"protocol": "https",
+					"host": [
+						"api",
+						"und-gesund",
+						"de"
+					],
+					"path": [
+						"v5",
+						"userInformation"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

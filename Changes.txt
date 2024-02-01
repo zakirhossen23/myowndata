@@ -1,0 +1,7 @@
+Changes:
+1. Changing blockchain to Cloud DB
+2. Rewrite Note(Optional) to Questions for researcher (Optional)
+3. Drawing Signature in consent section
+4. After doing the conesnt show onboarding with heart speaking icon.
+5. Making a chatbot after consent
+6. After that show a screen that you have filled in your personal information now you can explore you dashboard.

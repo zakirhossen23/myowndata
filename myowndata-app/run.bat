@@ -1,0 +1,1 @@
+flutter run --release --web-renderer html  -d web-server
