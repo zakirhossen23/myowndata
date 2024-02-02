@@ -24,20 +24,20 @@ export default function useContract() {
 	const fetchData = async () => {
 		await sleep(200);
 		try {
-			const contract = { contract: null, signerAddress: null, fD: fetchData };
+			// const contract = { contract: null, signerAddress: null, fD: fetchData };
 
-			if (window.localStorage.getItem("type") === "tronlink"){
-				contract.contract =  await window?.tronWeb?.contract().at(contractAdd);
-				contract.signerAddress =  window?.tronWeb?.defaultAddress?.base58;
-				window.contract = contract.contract;
-				setContractInstance(contract);
-			}else{
-				const tronWeb = new TronWeb(fullNode, solidityNode, eventServer, privateKey);
-				contract.signerAddress =  tronWeb.address.fromPrivateKey(privateKey);
-				contract.contract = await tronWeb.contract().at(contractAdd);
-				window.contract = contract.contract;
-				setContractInstance(contract);
-			}
+			// if (window.localStorage.getItem("type") === "tronlink"){
+			// 	contract.contract =  await window?.tronWeb?.contract().at(contractAdd);
+			// 	contract.signerAddress =  window?.tronWeb?.defaultAddress?.base58;
+			// 	window.contract = contract.contract;
+			// 	setContractInstance(contract);
+			// }else{
+			// 	const tronWeb = new TronWeb(fullNode, solidityNode, eventServer, privateKey);
+			// 	contract.signerAddress =  tronWeb.address.fromPrivateKey(privateKey);
+			// 	contract.contract = await tronWeb.contract().at(contractAdd);
+			// 	window.contract = contract.contract;
+			// 	setContractInstance(contract);
+			// }
 		} catch (error) {
 			console.error(error);
 		}

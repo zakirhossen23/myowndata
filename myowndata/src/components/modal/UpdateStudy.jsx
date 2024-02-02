@@ -11,7 +11,7 @@ export default function UpdateStudyModal({
     onHide,
     id
 }) {
-    const {UpdateStudy} = useDBContext();
+    const {UpdateStudy,base} = useDBContext();
 
     async function UpdateStudyHandle(e) {
         e.preventDefault();
@@ -44,23 +44,29 @@ export default function UpdateStudyModal({
     }
 
     async function LoadData() {
-        if (typeof window?.contract !== 'undefined') {
-            let study_element = await window.contract._studyMap(parseInt(id)).call();
-
+        const studyTable = base('studies');
+        const studyRecord = await studyTable.find(id);
+        if (studyRecord !== null) {
+			const study_element = studyRecord.fields;
             var newStudy = {
-                id: Number(study_element.study_id),
-                title: study_element.title,
-                image: study_element.image,
-                description: study_element.description,
-                contributors: Number(study_element.contributors),
-                audience: Number(study_element.audience),
-                budget: Number(study_element.budget)
-            };
+				id: studyRecord.id,
+				title: study_element.title,
+				image: study_element.image,
+				description: study_element.description,
+				contributors: Number(study_element.contributors),
+				audience: Number(study_element.audience),
+				budget: Number(study_element.budget),
+				reward_type: study_element.reward_type,
+				reward_price: Number(study_element.reward_price),
+				total_spending_limit: Number(study_element.total_spending_limit)
+			};
+
             document.getElementById("updatetitle").value = newStudy.title
             document.getElementById("updatedescription").value = newStudy.description
             document.getElementById("updateimage").value = newStudy.image
             document.getElementById("updatebudget").value = newStudy.budget
         }
+
     }
 
 

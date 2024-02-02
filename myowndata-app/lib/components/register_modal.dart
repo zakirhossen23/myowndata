@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:myowndata/components/data_edit_item.dart';
 import 'package:myowndata/components/data_edit_date_item.dart';
+import 'package:myowndata/model/airtable_api.dart';
 
 class RegisterModal extends StatefulWidget {
   @override
@@ -28,21 +29,24 @@ class RegisterApp extends State<RegisterModal> {
   };
 
   Future<void> RegisterAccount() async {
-    var url = Uri.parse(
-        'http://localhost:8080/api/GET/checkEmail?email=${Uri.encodeComponent(emailTXT.text)}');
-    final response = await http.get(url);
-    var responseData = json.decode(response.body);
-    if (responseData['value'] == "False") {
-      var urlReg = Uri.parse('http://localhost:8080/api/POST/Register');
-      await http.post(urlReg, headers: POSTheader, body: {
-        'fullname': fullnameTXT.text,
-        'birth_date': dateTXT.text,
-        'email': emailTXT.text,
-        'password': passwordTXT.text
-      });
+    final usersTable = base('users');
+    var filterByFormula =
+        ' AND({email} = \'${emailTXT.text}\', {password} = \'${passwordTXT.text}\')';
+    final records = await usersTable.select(filterBy: (filterByFormula));
 
-      Navigator.pop(context);
+    if ((records.isEmpty)) {
+        await usersTable.create({
+            "name": fullnameTXT.text,
+            "email": emailTXT.text,
+            "password": passwordTXT.text,
+            "birth_date": dateTXT.text,
+            "image": "https://i.postimg.cc/SsxGw5cZ/person.jpg",
+            "credits": 0          
+        });
+        Navigator.pop(context);
     }
+   
+   
     setState(() => isLoading = false);
     return;
   }

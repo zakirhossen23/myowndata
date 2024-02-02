@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "myowndata-app",
+            "cwd": "myowndata-app",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "myowndata-app (profile mode)",
+            "cwd": "myowndata-app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "myowndata-app (release mode)",
+            "cwd": "myowndata-app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

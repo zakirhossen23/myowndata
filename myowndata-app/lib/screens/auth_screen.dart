@@ -49,7 +49,7 @@ class AuthScreenApp extends State<AuthScreen> {
     final usersTable = base('users');
     var filterByFormula =
         ' AND({email} = \'${emailTXT.text}\', {password} = \'${passwordTXT.text}\')';
-    final records = await usersTable.select(filterBy: encodeComponent(filterByFormula));
+    final records = await usersTable.select(filterBy: (filterByFormula));
 
     if ((records.isNotEmpty)) {
       var userid = records[0]['id'];

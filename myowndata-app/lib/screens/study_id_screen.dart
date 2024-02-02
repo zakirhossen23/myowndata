@@ -64,7 +64,7 @@ class GetStudyIDScreen extends StatelessWidget {
               child: GestureDetector(
                 onTap: () async {
                   final prefs = await SharedPreferences.getInstance();
-                  prefs.setString("studyid", '0');
+                  prefs.setString("studyid", StudyIdText.text);
                   await Navigator.push(
                     context,
                     MaterialPageRoute(

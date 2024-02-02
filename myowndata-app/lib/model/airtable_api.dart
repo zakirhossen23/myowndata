@@ -46,9 +46,11 @@ class base {
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.data);
+      final data = (response.data);
       final records = (data['records'] as List).map((record) {
-        return record['fields'] as Map<String, dynamic>;
+        var record_each =  record['fields'] as Map<String, dynamic>;
+        record_each['id'] = (record['id'] as String);
+        return record_each;
       }).toList();
       return records;
     } else {
@@ -67,7 +69,7 @@ class base {
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.data);
+      final data =(response.data);
       final record = data['fields'] as Map<String, dynamic>;
       return record;
     } else {

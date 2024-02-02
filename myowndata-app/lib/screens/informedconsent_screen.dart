@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:myowndata/model/airtable_api.dart';
 import 'package:myowndata/model/question.dart';
 import 'package:myowndata/screens/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,14 +14,9 @@ import 'package:myowndata/model/informed_consent/ages.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:myowndata/model/informed_consent/subject.dart';
-import 'package:myowndata/components/bottom_navbar.dart';
 import 'package:myowndata/providers/navbar_provider.dart';
 import 'package:myowndata/providers/questionnaire_provider.dart';
 import 'package:myowndata/screens/journal_screen.dart';
-import 'package:myowndata/screens/tabscreens/home_screen.dart';
-import 'package:myowndata/screens/tabscreens/journey_screen.dart';
-import 'package:myowndata/screens/tabscreens/mydata_screen.dart';
-import 'package:myowndata/screens/tabscreens/credit_screen.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class InformedConsentScreen extends ConsumerStatefulWidget {
@@ -55,28 +51,94 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     ages_groups = [];
     subjects = [];
 
-    var url = Uri.parse(
-        'http://localhost:8080/api/GET/Study/GetInformedConsent?study_id=${studyid}&user_id=${userid}');
-    final response = await http.get(url);
-    var responseData = jsonDecode(response.body);
-    var value = jsonDecode(responseData['value']);
+    final usersTable = base('users');
+    final user_record = await usersTable.find(userid);
+    var birthDate = DateTime.parse(user_record['birth_date']);
+    var currentDate = DateTime.now();
+    int currentAge = currentDate.year - birthDate.year;
 
-    List<Ages> dataAge = (value["eligible_age_group"] as List).map((e) {
-      return Ages.fromMap((e as Map<String, dynamic>));
-    }).toList();
+    final studyTable = base('studies');
+    final study_record = await studyTable.find(studyid);
 
-    List<Subject> dataSubjects = (value["subjects"] as List).map((e) {
-      return Subject.fromMap((e as Map<String, dynamic>));
-    }).toList();
-    var studytitle = (value['study_title'].toString());
+    final studyDataTable = base('study_data');
+    var filterByFormula = ' {study_id} = \'${studyid}\'';
+    final study_data_record =
+        await studyDataTable.select(filterBy: (filterByFormula));
 
-    setState(() {
-      ages_groups = dataAge;
-      subjects = dataSubjects;
-      study_title = studytitle;
-      isloading = false;
-      study_id = studyid;
-    });
+    if (study_data_record.isNotEmpty) {
+      var data_record = study_data_record[0];
+      final agesGroups =
+          (data_record['ages'] == null) ? [] : json.decode(data_record['ages']);
+
+      // Filter eligible age group
+      List<Map<String, dynamic>> eligibleAgeGroup = agesGroups.where((val) {
+        if (!val['older']) {
+          if (val['from'] < currentAge && currentAge < val['to']) {
+            return true;
+          }
+        } else {
+          if (val['from'] < currentAge) return true;
+        }
+        return false;
+      }).toList();
+
+      final studyTitle = (data_record['Titles'] == null)
+          ? []
+          : json.decode(data_record['Titles']);
+
+      final studySubjectsTable = base('study_subjects');
+      filterByFormula = ' {study_id} = \'${studyid}\'';
+      final subjects_records =
+          await studySubjectsTable.select(filterBy: (filterByFormula));
+
+      List<Map<String, dynamic>> newSubjects = [];
+      for (var element in subjects_records) {
+        var subjectElement = element['fields'];
+        var eligibleAgesAns = (eligibleAgeGroup.isNotEmpty)
+            ? json.decode(subjectElement['ages_ans'])[eligibleAgeGroup[0]['id']]
+            : {};
+
+        newSubjects.add({
+          'subject_id': subjectElement['subject_id'],
+          'study_id': subjectElement['study_id'],
+          'subject_index_id': subjectElement['subject_index_id'],
+          'title': subjectElement['title'],
+          'ages_ans': eligibleAgesAns,
+        });
+      }
+
+      var newStudy = {
+        'id': study_record['study_id'],
+        'title': study_record['title'],
+        'image': study_record['image'],
+        'description': study_record['description'],
+        'contributors': study_record['contributors'],
+        'audience': study_record['audience'],
+        'budget': study_record['budget'],
+        'permissions': study_record['permission'],
+        'study_title': studyTitle[eligibleAgeGroup[0]['id']],
+        'subjects': newSubjects,
+        'ages_groups': agesGroups,
+        'eligible_age_group': eligibleAgeGroup,
+      };
+
+      List<Ages> dataAge = (newStudy["eligible_age_group"] as List).map((e) {
+        return Ages.fromMap((e as Map<String, dynamic>));
+      }).toList();
+      List<Subject> dataSubjects = (newStudy["subjects"] as List).map((e) {
+        return Subject.fromMap((e as Map<String, dynamic>));
+      }).toList();
+      var studytitle = (newStudy['study_title'].toString());
+
+      setState(() {
+        ages_groups = dataAge;
+        subjects = dataSubjects;
+        study_title = studytitle;
+        isloading = false;
+        study_id = studyid;
+      });
+    }
+
     print("Done!");
   }
 

@@ -59,11 +59,8 @@ export function DBProvider({ children }) {
                 "name": full_name,
                 "email": email,
                 "password": password,
-                "privatekey": "",
                 "image": "https://i.postimg.cc/SsxGw5cZ/person.jpg",
                 "credits": 0,
-                "accesstoken": "",
-                "fhirid": 0,
             });
             console.log('User record created successfully in Airtable!');
         } catch (error) {
