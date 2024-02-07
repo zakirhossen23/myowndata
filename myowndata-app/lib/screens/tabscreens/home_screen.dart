@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:myowndata/model/airtable_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -96,9 +97,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       "startSurvey": 0,
       "totalprice": 0
     };
+
+
+    final OngoingStudiesTable = base('ongoing_studies');
+
+     var filterByFormula = ' {user_id} = \'${userid}\'';
+      final ongoing_records =
+          await OngoingStudiesTable.select(filterBy: (filterByFormula));
+    
+    
+    final StudiesTable = base('studies');
+
+    final ongoing_study_record =await StudiesTable.find(ongoing_records[0]['study_id']);
+
+
+
+
     dummyActions = [];
-    var url = Uri.parse(
-        'http://localhost:8080/api/GET/Study/GetOngoingStudy?userid=${userid}');
+    var url = Uri.parse('http://localhost:8080/api/GET/Study/GetOngoingStudy?userid=${userid}');
     var correctStatus = false;
     var response = null;
     while (correctStatus == false) {

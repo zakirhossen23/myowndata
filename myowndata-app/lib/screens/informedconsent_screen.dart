@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -6,8 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:myowndata/components/signature_modal.dart';
 import 'package:myowndata/model/airtable_api.dart';
 import 'package:myowndata/model/question.dart';
+import 'package:myowndata/screens/connect_data.dart';
 import 'package:myowndata/screens/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myowndata/model/informed_consent/ages.dart';
@@ -17,6 +20,7 @@ import 'package:myowndata/model/informed_consent/subject.dart';
 import 'package:myowndata/providers/navbar_provider.dart';
 import 'package:myowndata/providers/questionnaire_provider.dart';
 import 'package:myowndata/screens/journal_screen.dart';
+import 'package:signature/signature.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class InformedConsentScreen extends ConsumerStatefulWidget {
@@ -36,7 +40,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
   var study_title = "";
   List<Subject> subjects = [];
   String study_id = "-1";
-
+  String UserName = "";
   bool isloading = true;
 
   void UpdateLoading(bool status) {
@@ -56,6 +60,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     var birthDate = DateTime.parse(user_record['birth_date']);
     var currentDate = DateTime.now();
     int currentAge = currentDate.year - birthDate.year;
+    UserName = user_record['name'];
 
     final studyTable = base('studies');
     final study_record = await studyTable.find(studyid);
@@ -65,13 +70,13 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     final study_data_record =
         await studyDataTable.select(filterBy: (filterByFormula));
 
-    if (study_data_record.isNotEmpty) {
+    if (study_data_record.length > 0) {
       var data_record = study_data_record[0];
       final agesGroups =
           (data_record['ages'] == null) ? [] : json.decode(data_record['ages']);
 
       // Filter eligible age group
-      List<Map<String, dynamic>> eligibleAgeGroup = agesGroups.where((val) {
+      final eligibleAgeGroup = agesGroups.where((val) {
         if (!val['older']) {
           if (val['from'] < currentAge && currentAge < val['to']) {
             return true;
@@ -93,8 +98,8 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
 
       List<Map<String, dynamic>> newSubjects = [];
       for (var element in subjects_records) {
-        var subjectElement = element['fields'];
-        var eligibleAgesAns = (eligibleAgeGroup.isNotEmpty)
+        var subjectElement = element;
+        var eligibleAgesAns = (eligibleAgeGroup.length > 0)
             ? json.decode(subjectElement['ages_ans'])[eligibleAgeGroup[0]['id']]
             : {};
 
@@ -147,15 +152,14 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
       isloading = true;
     });
     final prefs = await SharedPreferences.getInstance();
-    int userid = int.parse(prefs.getString("userid").toString());
-    int studyid = int.parse(study_id);
+    String userid = (prefs.getString("userid").toString());
+    String studyid = (study_id);
+    final InformedConsentTable = base('informed_consents');
 
-    var url = Uri.parse(
-        'http://localhost:8080/api/POST/Study/CreateCompletedInformedConsent');
-    await http.post(url, headers: POSTheader, body: {
-      'userid': userid.toString(),
+    await InformedConsentTable.create({
+      "study_id": studyid,
+      "user_id": userid,
       'date': DateTime.now().toIso8601String(),
-      'studyid': studyid.toString()
     });
 
     var given_permission = {
@@ -172,19 +176,21 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
 
     String JsonMadePermission = given_permission.toString();
 
-    var url2 =
-        Uri.parse('http://localhost:8080/api/POST/Study/CreateOngoingStudy');
-    await http.post(url2, headers: POSTheader, body: {
-      'studyid': studyid.toString(),
-      'userid': userid.toString(),
+    final OngoingStudiesTable = base('ongoing_studies');
+
+    await OngoingStudiesTable.create({
+      "study_id": studyid,
+      "user_id": userid,
+      'date': DateTime.now().toIso8601String(),
       'given_permission': JsonMadePermission
     });
+
     await Future.delayed(Duration(seconds: 2));
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => MainScreen(),
+        builder: (context) => ConnectDataScreen(),
       ),
     );
     setState(() {
@@ -251,7 +257,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
               ))),
       backgroundColor: Colors.white,
       body: InformConsent(isloading, UpdateLoading, ages_groups, study_title,
-          subjects, questionnaireViewmodel, study_id, FinishIC),
+          subjects, questionnaireViewmodel, study_id, FinishIC, UserName),
     );
   }
 }
@@ -260,6 +266,7 @@ class InformConsent extends StatefulWidget {
   final isloading;
   final ages_groups;
   final study_title;
+  final UserName;
   final List<Subject> subjects;
   final questionnaireViewmodel;
   final Function UpdateLoading;
@@ -275,7 +282,8 @@ class InformConsent extends StatefulWidget {
       this.subjects,
       this.questionnaireViewmodel,
       this.study_id,
-      this.FinishIC);
+      this.FinishIC,
+      this.UserName);
 
   @override
   _InformConsentState createState() => _InformConsentState();
@@ -296,6 +304,7 @@ class _InformConsentState extends State<InformConsent> {
     var isloading = widget.isloading;
     var ages_groups = widget.ages_groups;
     var study_title = widget.study_title;
+    String UserName = widget.UserName;
     var questionnaireViewmodel = widget.questionnaireViewmodel;
     List<Subject> subjects = widget.subjects;
     Function UpdateLoading = widget.UpdateLoading;
@@ -316,6 +325,13 @@ class _InformConsentState extends State<InformConsent> {
       List<Widget> allsection = [];
 
       allsection.add(Column(children: [
+        Container(
+          margin: EdgeInsets.only(top: 64, bottom: 20),
+          child: Image.asset(
+            "assets/images/heart.gif",
+            width: 250,
+          ),
+        ),
         const SizedBox(
           height: 12,
         ),
@@ -395,7 +411,11 @@ class _InformConsentState extends State<InformConsent> {
                         0xFFFEE4CA,
                       ),
                     ),
-                    child: QuestionWidget(subject: e, size: size),
+                    child: QuestionWidget(
+                      subject: e,
+                      size: size,
+                      UserName: UserName,
+                    ),
                   ),
                   Row(
                     //Hard Coded
@@ -645,8 +665,7 @@ class _InformConsentState extends State<InformConsent> {
           ),
           Container(
             margin: EdgeInsets.only(left: 20, right: 20, top: 40),
-            child: Text(
-                "Thank you for joining the study. You will get a notification in the app and email in three days to start the study ",
+            child: Text("You have finished your informed consent",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.getFont('Lexend Deca',
                     color: Color(0xFF423838),
@@ -656,17 +675,42 @@ class _InformConsentState extends State<InformConsent> {
           const SizedBox(
             height: 12,
           ),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            GestureDetector(
-              onTap: () async {
-                await FinishIC();
-              },
+         Row(mainAxisAlignment: MainAxisAlignment.center, children: [ GestureDetector(
+            onTap: () async {
+               await FinishIC();
+              _scrollToTop();
+            },
+            child: Material(
+              borderRadius: BorderRadius.circular(8),
+              elevation: 2,
               child: Container(
-                margin: const EdgeInsets.only(top: 24),
-                child: Image.asset("assets/images/check.png"),
+                height: 40,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: const Color(0xFFF06129),
+                ),
+                child: Center(
+                  child: Text(
+                    "Let's fill your personal information",
+                    style: GoogleFonts.getFont('Lexend Deca',
+                        fontSize: 16, color: Colors.white),
+                  ),
+                ),
               ),
-            )
-          ]),
+            ),
+          ),]),
+
+          // Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          //   GestureDetector(
+          //     onTap: () async {
+          //       await FinishIC();
+          //     },
+          //     child: Container(
+          //       margin: const EdgeInsets.only(top: 24),
+          //       child: Image.asset("assets/images/check.png"),
+          //     ),
+          //   )
+          // ]),
         ],
       ));
 
@@ -722,6 +766,11 @@ class _QuestionYesNoWidget extends State<QuestionYesNoWidget> {
 
     final Question question = widget.question;
     TextEditingController AnswerBox = new TextEditingController();
+    Uint8List? signatureImage;
+    final SignatureController signature_controller = SignatureController(
+      penStrokeWidth: 4.0,
+      penColor: Colors.black,
+    );
 
     return Container(
       width: size.width,
@@ -761,18 +810,37 @@ class _QuestionYesNoWidget extends State<QuestionYesNoWidget> {
                               fontSize: 12,
                               fontWeight: FontWeight.w700),
                         )),
-                    Container(
-                      margin: const EdgeInsets.only(
-                          right: 10, bottom: 20, left: 10),
-                      child: TextField(
-                        controller: AnswerBox,
-                        keyboardType: TextInputType.url,
-                        decoration: const InputDecoration(
-                            fillColor: Colors.white,
-                            filled: true,
-                            hintText: "https://image.com/example.png"),
+                    Column(children: [
+                      GestureDetector(
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  SignatureModal(signature_controller),
+                            ),
+                          );
+                          setState(() async {
+                            signatureImage =
+                                await signature_controller.toPngBytes();
+                          });
+                        },
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Color(0xFFF06129)),
+                          ),
+                          child: signatureImage != null
+                              ? Image.memory(signatureImage!)
+                              : Icon(
+                                  Icons.edit,
+                                  size: 50,
+                                  color: Color(0xFFF06129),
+                                ),
+                        ),
                       ),
-                    )
+                    ]),
                   ],
                 )
               : Column(
@@ -829,10 +897,12 @@ class _QuestionYesNoWidget extends State<QuestionYesNoWidget> {
 class QuestionWidget extends StatefulWidget {
   final Subject subject;
   final Size size;
+  final String UserName;
   const QuestionWidget({
     Key? key,
     required this.subject,
     required this.size,
+    required this.UserName,
   });
 
   @override
@@ -843,6 +913,7 @@ class _QuestionWidget extends State<QuestionWidget> {
   @override
   Widget build(BuildContext context) {
     final Subject subject = widget.subject;
+    final String UserName = widget.UserName;
     final Size size = widget.size;
     TextEditingController AnswerBox = new TextEditingController();
     TextEditingController ImageBox = new TextEditingController();
@@ -909,7 +980,8 @@ class _QuestionWidget extends State<QuestionWidget> {
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Expanded(
                 child: Text(
-                  subject.ages_ans!.answer,
+                  subject.ages_ans!.answer
+                      .replaceAll("{patient_name}", UserName),
                   textAlign: TextAlign.left,
                   style: GoogleFonts.getFont('Lexend Deca',
                       color: const Color(0xFF423838),
@@ -920,33 +992,6 @@ class _QuestionWidget extends State<QuestionWidget> {
               ),
             ]),
           ),
-          // Container(                                                           //Hard Coded
-          //     margin: const EdgeInsets.only(top: 24, bottom: 24),
-          //     padding: const EdgeInsets.only(left: 24, right: 24),
-          //     child: Column(
-          //       children: [
-          //         Text("Note (Optional):", textAlign: TextAlign.left),
-          //         Container(
-          //           margin: const EdgeInsets.only(top: 15),
-          //           child: TextField(
-          //             controller: AnswerBox,
-          //             keyboardType: TextInputType.multiline,
-          //             maxLines: 4,
-          //             onTap: () async {
-          //               await Navigator.push(
-          //                 context,
-          //                 MaterialPageRoute(
-          //                   builder: (context) =>
-          //                       JournalScreen(AnswerBox, title: "Note"),
-          //                 ),
-          //               );
-          //             },
-          //             decoration: const InputDecoration(
-          //                 fillColor: Colors.white, filled: true),
-          //           ),
-          //         )
-          //       ],
-          //     )),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -1097,22 +1142,14 @@ class _QuestionWidget extends State<QuestionWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text("Note (Optional):", textAlign: TextAlign.left),
+                  Text("Questions for researcher (Optional):",
+                      textAlign: TextAlign.left),
                   Container(
                     margin: const EdgeInsets.only(top: 15),
                     child: TextField(
                       controller: AnswerBox,
                       keyboardType: TextInputType.multiline,
                       maxLines: 4,
-                      onTap: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                JournalScreen(AnswerBox, title: "Note"),
-                          ),
-                        );
-                      },
                       decoration: const InputDecoration(
                           fillColor: Colors.white, filled: true),
                     ),
@@ -1218,7 +1255,8 @@ class _QuestionWidget extends State<QuestionWidget> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text("Note (Optional):", textAlign: TextAlign.left),
+                Text("Questions for researcher (Optional):",
+                    textAlign: TextAlign.left),
                 Container(
                   margin: const EdgeInsets.only(top: 15),
                   child: TextField(
@@ -1299,7 +1337,7 @@ class _QuestionWidget extends State<QuestionWidget> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                "Note (Optional):",
+                "Questions for researcher (Optional):",
                 textAlign: TextAlign.left,
               ),
               Container(
@@ -1308,64 +1346,12 @@ class _QuestionWidget extends State<QuestionWidget> {
                   controller: AnswerBox,
                   keyboardType: TextInputType.multiline,
                   maxLines: 4,
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            JournalScreen(AnswerBox, title: "Note"),
-                      ),
-                    );
-                  },
                   decoration: const InputDecoration(
                       fillColor: Colors.white, filled: true),
                 ),
               )
             ],
           )),
-      // Column(
-      //   mainAxisSize: MainAxisSize.min,
-      //   children: [
-      //     Row(
-      //       children: [
-      //         GestureDetector(
-      //           onTap: () {
-      //             setState(() {
-      //               question.GivenAnswer = "Yes";
-
-      //             });
-      //           },
-      //           child: Container(
-      //               margin: const EdgeInsets.only(left: 24, right: 24),
-      //               child: question.GivenAnswer != "Yes"
-      //                   ? Image.asset("assets/images/moods/back-yes.png")
-      //                   : Image.asset(
-      //                       "assets/images/moodspressed/back-yes.png")),
-      //         ),
-      //         const Text("Yes")
-      //       ],
-      //     ),
-      //     Row(
-      //       children: [
-      //         GestureDetector(
-      //           onTap: () {
-      //             setState(() {
-      //               question.GivenAnswer = "No";
-
-      //             });
-      //           },
-      //           child: Container(
-      //               margin: const EdgeInsets.only(left: 24, right: 24),
-      //               child: question.GivenAnswer != "No"
-      //                   ? Image.asset("assets/images/moods/back-no.png")
-      //                   : Image.asset(
-      //                       "assets/images/moodspressed/back-no.png")),
-      //         ),
-      //         const Text("No")
-      //       ],
-      //     )
-      //   ],
-      // )
     ]);
   }
 }

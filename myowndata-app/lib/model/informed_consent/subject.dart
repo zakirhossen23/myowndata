@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:myowndata/model/informed_consent/agesAns.dart';
 
 class Subject {
-  int subject_id;
+  String subject_id;
   String subject_index_id;
   String title;
-  int study_id;
+  String study_id;
   AgesAns? ages_ans;
 
   Subject({
@@ -18,10 +18,10 @@ class Subject {
   });
 
   Subject copyWith(
-      {int? subject_id,
+      {String? subject_id,
       String? subject_index_id,
       String? title,
-      int? study_id,
+      String? study_id,
       AgesAns? ages_ans}) {
     return Subject(
         subject_id: subject_id ?? this.subject_id,

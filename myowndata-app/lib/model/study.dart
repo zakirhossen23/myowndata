@@ -4,7 +4,7 @@ class Study {
   String? permission;
   String image;
   String title;
-  int id;
+  String id;
   Study({
     required this.id,
     required this.image,

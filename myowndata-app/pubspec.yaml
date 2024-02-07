@@ -53,6 +53,7 @@ dependencies:
   flutter_html: ^2.2.1
   youtube_player_flutter: ^8.1.2
   dio: ^4.0.0
+  signature: ^4.0.0
 
 dev_dependencies:
   flutter_test:
