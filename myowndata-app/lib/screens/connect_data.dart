@@ -18,12 +18,11 @@ class ConnectDataScreen extends StatefulWidget {
 class ConnectDataApp extends State<ConnectDataScreen> {
   TextEditingController GivenNameTXT = new TextEditingController();
   TextEditingController FamilyNameTXT = new TextEditingController();
-  TextEditingController GenderTXT = new TextEditingController();
+  TextEditingController GenderTXT = new TextEditingController(text:null);
   TextEditingController PhoneTXT = new TextEditingController();
   TextEditingController DiseaseTXT = new TextEditingController();
 
   bool isLoading = false;
-
 
   @override
   initState() {
@@ -31,7 +30,6 @@ class ConnectDataApp extends State<ConnectDataScreen> {
   }
 
   Future<void> UpdateData() async {
-
     // final prefs = await SharedPreferences.getInstance();
     // var userid = prefs.getString("userid");
     // try {
@@ -62,7 +60,6 @@ class ConnectDataApp extends State<ConnectDataScreen> {
     setState(() => isLoading = false);
     return;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -110,8 +107,7 @@ class ConnectDataApp extends State<ConnectDataScreen> {
               ),
               Container(
                   margin: const EdgeInsets.only(left: 24, right: 24),
-                  child: DataEditDropdown(
-                      items: ["Male", "Female"], controller: GenderTXT)),
+                  child: DataEditDropdown(controller: GenderTXT, items: ["Male","Female"],  label: "Gender",)),
               Container(
                 margin: const EdgeInsets.only(left: 24, right: 24),
                 child: DataEditItem(label: "Phone", controller: PhoneTXT),
@@ -147,9 +143,10 @@ class ConnectDataApp extends State<ConnectDataScreen> {
                                 height: 20.0,
                                 width: 20.0,
                               )
-                            :  Container(
-                                  child: Image.asset("assets/images/check.png"),
-                                ),
+                            : Text("Update",style:GoogleFonts.getFont('Lexend Deca',
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500))
                       ),
                     ),
                   ),

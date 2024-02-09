@@ -684,7 +684,9 @@ class _InformConsentState extends State<InformConsent> {
               borderRadius: BorderRadius.circular(8),
               elevation: 2,
               child: Container(
-                height: 40,
+              padding: const EdgeInsets.only(
+                          top: 0, left: 10, right: 10, bottom: 0),
+                      height: 40,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   color: const Color(0xFFF06129),

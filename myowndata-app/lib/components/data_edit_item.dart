@@ -49,8 +49,10 @@ class DataEditItem extends StatelessWidget {
               obscureText: isPassword,
               keyboardType:
                   isNumeric ? TextInputType.number : TextInputType.text,
-              style: 
-                  GoogleFonts.getFont('Lexend Deca',  color: Color(0xFF232323),),
+              style: GoogleFonts.getFont(
+                'Lexend Deca',
+                color: Color(0xFF232323),
+              ),
               textAlignVertical: TextAlignVertical.center,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(
@@ -60,8 +62,8 @@ class DataEditItem extends StatelessWidget {
                 enabledBorder: const OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.grey, width: 1),
                 ),
-                hintStyle: 
-                GoogleFonts.getFont('Lexend Deca', color: Colors.grey.withOpacity(0.5)),
+                hintStyle: GoogleFonts.getFont('Lexend Deca',
+                    color: Colors.grey.withOpacity(0.5)),
                 suffixIcon: controller.text.length > 0
                     ? GestureDetector(
                         child: Icon(
