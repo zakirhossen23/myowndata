@@ -76,15 +76,7 @@ class ConnectDataApp extends State<ConnectDataScreen> {
               SizedBox(
                 height: size.height / 8,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "assets/images/heart.png",
-                    width: 100,
-                  ),
-                ],
-              ),
+             
               Container(
                 //width: 400,
 
@@ -114,10 +106,10 @@ class ConnectDataApp extends State<ConnectDataScreen> {
               ),
               Container(
                 margin: const EdgeInsets.only(left: 24, right: 24),
-                child: DataEditItem(label: "Disease", controller: DiseaseTXT),
+                child: DataEditItem(label: "About", controller: DiseaseTXT, isFilled:true),
               ),
               Container(
-                margin: const EdgeInsets.only(top: 32, left: 24, right: 24),
+                margin: const EdgeInsets.only(top: 0, left: 24, right: 24),
                 child: GestureDetector(
                   onTap: () async {
                     if (isLoading) return;
@@ -127,7 +119,7 @@ class ConnectDataApp extends State<ConnectDataScreen> {
                   },
                   child: Material(
                     borderRadius: BorderRadius.circular(8),
-                    elevation: 2,
+                    elevation: 0,
                     child: Container(
                       height: 40,
                       decoration: BoxDecoration(
