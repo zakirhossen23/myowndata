@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:myowndata/screens/connect_data.dart';
+import 'package:myowndata/screens/informedconsent_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myowndata/components/data_edit_item.dart';
 import 'package:myowndata/components/register_modal.dart';
@@ -61,7 +62,7 @@ class AuthScreenApp extends State<AuthScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => ConnectDataScreen(),
+          builder: (context) => GetStudyIDScreen(),
         ),
       );
       print(prefs.getString("userid"));

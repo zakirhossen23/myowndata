@@ -40,7 +40,7 @@ export default function ViewControbutiors({show,setShow, onHide, id}) {
 			if (given_permission.gender)
 				FHIRS_COLS.push({
 					id: "gender",
-					title: "Gender"
+					title: "Sex"
 				});
 			if (given_permission.phone)
 				FHIRS_COLS.push({

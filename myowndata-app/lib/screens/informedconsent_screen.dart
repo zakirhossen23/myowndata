@@ -93,8 +93,12 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
 
       final studySubjectsTable = base('study_subjects');
       filterByFormula = ' {study_id} = \'${studyid}\'';
-      final subjects_records =
-          await studySubjectsTable.select(filterBy: (filterByFormula));
+      var sort = [
+        {"field": "Order_ID", "direction": "asc"}
+      ];
+
+      final subjects_records = await studySubjectsTable.select(
+          filterBy: (filterByFormula), sortBy: sort);
 
       List<Map<String, dynamic>> newSubjects = [];
       for (var element in subjects_records) {
@@ -241,7 +245,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
                     icon: Icon(Icons.arrow_back, color: Colors.white),
                   ),
                   Container(width: 300 - 30),
-                  questionnaireViewmodel.selectedIndex != subjects.length
+                  questionnaireViewmodel.selectedIndex - 1 != subjects.length
                       ? IconButton(
                           iconSize: 20,
                           onPressed: () {
@@ -383,114 +387,52 @@ class _InformConsentState extends State<InformConsent> {
       allsection.addAll(subjects.map((e) {
         TextEditingController AnswerBox = new TextEditingController();
 
-        return Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: 48, right: 48, top: 40),
-              child: Text(study_title,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.getFont('Lexend Deca',
-                      color: Color(0xFF423838),
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700)),
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            Container(
-              decoration: BoxDecoration(color: Colors.white),
+        return SingleChildScrollView(
+            controller: _scrollController,
+            child: Expanded(
               child: Column(
-                children: [
-                  Container(
-                    width: size.width,
-                    margin: const EdgeInsets.only(left: 16, right: 16),
-                    padding: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: const Color(
-                        0xFFFEE4CA,
-                      ),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left: 48, right: 48, top: 40),
+                      child: Text(study_title,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.getFont('Lexend Deca',
+                              color: Color(0xFF423838),
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700)),
                     ),
-                    child: QuestionWidget(
-                      subject: e,
-                      size: size,
-                      UserName: UserName,
+                    const SizedBox(
+                      height: 12,
                     ),
-                  ),
-                  Row(
-                    //Hard Coded
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Visibility(
-                        visible: questionnaireViewmodel.selectedIndex > 0,
-                        child: Container(
-                          width: (size.width - (24 * 3)) / 2,
-                          margin: const EdgeInsets.only(
-                              top: 20, left: 24, bottom: 24),
-                          child: GestureDetector(
-                            onTap: () async {
-                              questionnaireViewmodel.updateIndex(
-                                  questionnaireViewmodel.selectedIndex - 1);
-                              _scrollToTop();
-                            },
-                            child: Material(
-                              borderRadius: BorderRadius.circular(8),
-                              elevation: 2,
-                              child: Container(
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: const Color(0xFFF06129),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Previous",
-                                    style: GoogleFonts.getFont('Lexend Deca',
-                                        fontSize: 16, color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                    Container(
+                      width: size.width,
+                      margin: const EdgeInsets.only(left: 16,  right: 16),
+                      padding: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: const Color(
+                          0xFFFEE4CA,
                         ),
                       ),
-                      Container(
-                        width: questionnaireViewmodel.selectedIndex > 0
-                            ? (size.width - (24 * 3)) / 2
-                            : (size.width - (24 * 3)),
-                        margin: const EdgeInsets.only(
-                            left: (24), top: 20, right: 24, bottom: 24),
-                        child: GestureDetector(
-                          onTap: () async {
-                            GoToNextUrl();
-                          },
-                          child: Material(
-                            borderRadius: BorderRadius.circular(8),
-                            elevation: 2,
-                            child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: const Color(0xFFF06129),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Next",
-                                  style: GoogleFonts.getFont('Lexend Deca',
-                                      fontSize: 16, color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                      child: QuestionWidget(
+                        subject: e,
+                        size: size,
+                        UserName: UserName,
                       ),
-                    ],
-                  )
-                ],
-              ),
-            )
-          ],
-        );
+                    ),
+                    Visibility(
+                      visible:   questionnaireViewmodel.selectedIndex >
+                                            0 && questionnaireViewmodel.selectedIndex < subjects.length+1,
+                      child: 
+                     Container(
+                      height: 100,
+                      child: Text(""),
+                    )
+                    )
+                   
+                  ]),
+            ));
       }).toList());
       var allDeclerationOfConsent = [
         Question(
@@ -607,7 +549,7 @@ class _InformConsentState extends State<InformConsent> {
                   children: [
                     Container(
                       width: size.width,
-                      height: size.height - 100,
+                      height: size.height - 122 ,
                       child: ListView.builder(
                         padding: const EdgeInsets.only(bottom: 80),
                         itemCount: allDeclerationOfConsent.length,
@@ -675,32 +617,34 @@ class _InformConsentState extends State<InformConsent> {
           const SizedBox(
             height: 12,
           ),
-         Row(mainAxisAlignment: MainAxisAlignment.center, children: [ GestureDetector(
-            onTap: () async {
-               await FinishIC();
-              _scrollToTop();
-            },
-            child: Material(
-              borderRadius: BorderRadius.circular(8),
-              elevation: 2,
-              child: Container(
-              padding: const EdgeInsets.only(
-                          top: 0, left: 10, right: 10, bottom: 0),
-                      height: 40,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: const Color(0xFFF06129),
-                ),
-                child: Center(
-                  child: Text(
-                    "Let's fill your personal information",
-                    style: GoogleFonts.getFont('Lexend Deca',
-                        fontSize: 16, color: Colors.white),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            GestureDetector(
+              onTap: () async {
+                await FinishIC();
+                _scrollToTop();
+              },
+              child: Material(
+                borderRadius: BorderRadius.circular(8),
+                elevation: 2,
+                child: Container(
+                  padding: const EdgeInsets.only(
+                      top: 0, left: 10, right: 10, bottom: 0),
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: const Color(0xFFF06129),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Let's fill your personal information",
+                      style: GoogleFonts.getFont('Lexend Deca',
+                          fontSize: 16, color: Colors.white),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),]),
+          ]),
 
           // Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           //   GestureDetector(
@@ -737,18 +681,126 @@ class _InformConsentState extends State<InformConsent> {
               ]
             : [
                 Expanded(
-                    child: SingleChildScrollView(
-                        controller: _scrollController,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Stack(alignment: Alignment.topCenter, children: [
-                              IndexedStack(
-                                  index: questionnaireViewmodel.selectedIndex,
-                                  children: renderSections())
-                            ])
-                          ],
-                        )))
+                  child: Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      IndexedStack(
+                        index: questionnaireViewmodel.selectedIndex,
+                        children: renderSections(),
+                      ),
+                     
+                      // Bottom navigation buttons
+                       Visibility(
+                                    visible:
+                                        questionnaireViewmodel.selectedIndex >
+                                            0 && questionnaireViewmodel.selectedIndex < subjects.length+1,
+                                    child: Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            decoration: BoxDecoration(color: Colors.white),
+                            child: Column(
+                              children: [
+                               Row(
+                                      //Hard Coded
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Visibility(
+                                          visible: questionnaireViewmodel
+                                                  .selectedIndex >
+                                              1,
+                                          child: Container(
+                                            width: (size.width - (24 * 3)) / 2,
+                                            margin: const EdgeInsets.only(
+                                                top: 20, left: 24, bottom: 24),
+                                            child: GestureDetector(
+                                              onTap: () async {
+                                                questionnaireViewmodel
+                                                    .updateIndex(
+                                                        questionnaireViewmodel
+                                                                .selectedIndex -
+                                                            1);
+                                                _scrollToTop();
+                                              },
+                                              child: Material(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                elevation: 2,
+                                                child: Container(
+                                                  height: 40,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    color:
+                                                        const Color(0xFFF06129),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      "Previous",
+                                                      style:
+                                                          GoogleFonts.getFont(
+                                                              'Lexend Deca',
+                                                              fontSize: 16,
+                                                              color:
+                                                                  Colors.white),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: questionnaireViewmodel
+                                                      .selectedIndex >
+                                                  0
+                                              ? (size.width - (24 * 3)) / 2
+                                              : (size.width - (24 * 3)),
+                                          margin: const EdgeInsets.only(
+                                              left: (24),
+                                              top: 20,
+                                              right: 24,
+                                              bottom: 24),
+                                          child: GestureDetector(
+                                            onTap: () async {
+                                              GoToNextUrl();
+                                            },
+                                            child: Material(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              elevation: 2,
+                                              child: Container(
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  color:
+                                                      const Color(0xFFF06129),
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    "Next",
+                                                    style: GoogleFonts.getFont(
+                                                        'Lexend Deca',
+                                                        fontSize: 16,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                              ],
+                            ),
+                          )),
+                   ) ],
+                  ),
+                )
               ]);
   }
 }
@@ -1301,7 +1353,8 @@ class _QuestionWidget extends State<QuestionWidget> {
       ]);
     }
 
-    return Column(children: [
+    return Expanded(
+        child: Column(children: [
       Container(
         margin: const EdgeInsets.only(top: 24, bottom: 24),
         padding: const EdgeInsets.only(left: 48, right: 48),
@@ -1319,41 +1372,42 @@ class _QuestionWidget extends State<QuestionWidget> {
         margin: const EdgeInsets.only(left: 24, right: 24),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Expanded(
-            child: Text(
-              subject.ages_ans!.answer,
-              textAlign: TextAlign.left,
-              style: GoogleFonts.getFont('Lexend Deca',
-                  color: const Color(0xFF423838),
-                  fontSize: 14,
-                  letterSpacing: 0.82,
-                  fontWeight: FontWeight.w400),
-            ),
+            child: Container(
+                // Hard Coded
+                margin: const EdgeInsets.only(top: 24, bottom: 24),
+                padding: const EdgeInsets.only(left: 24, right: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      subject.ages_ans!.answer,
+                      textAlign: TextAlign.left,
+                      style: GoogleFonts.getFont('Lexend Deca',
+                          color: const Color(0xFF423838),
+                          fontSize: 14,
+                          letterSpacing: 0.82,
+                          fontWeight: FontWeight.w400),
+                    ),
+                    SizedBox(height: 25,),
+                    Text(
+                      "Questions for researcher (Optional):",
+                      textAlign: TextAlign.left,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 15),
+                      child: TextField(
+                        controller: AnswerBox,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 4,
+                        decoration: const InputDecoration(
+                            fillColor: Colors.white, filled: true),
+                      ),
+                    )
+                  ],
+                )),
           ),
         ]),
       ),
-      Container(
-          // Hard Coded
-          margin: const EdgeInsets.only(top: 24, bottom: 24),
-          padding: const EdgeInsets.only(left: 24, right: 24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                "Questions for researcher (Optional):",
-                textAlign: TextAlign.left,
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 15),
-                child: TextField(
-                  controller: AnswerBox,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: 4,
-                  decoration: const InputDecoration(
-                      fillColor: Colors.white, filled: true),
-                ),
-              )
-            ],
-          )),
-    ]);
+    ]));
   }
 }

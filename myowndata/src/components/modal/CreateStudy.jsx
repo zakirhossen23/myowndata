@@ -102,7 +102,7 @@ export default function CreateStudyModal({show, onHide}) {
 								</div>
 								<div className="form-check">
 									<input className="form-check-input" name="fhir['gender']" type="checkbox" />
-									<label className="form-check-label">Gender</label>
+									<label className="form-check-label">Sex</label>
 								</div>
 								<div className="form-check">
 									<input className="form-check-input" name="fhir['phone']" type="checkbox" />

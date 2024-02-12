@@ -50,17 +50,17 @@ Subjects:
 
 ----------------------->Introduction<--------------------
 
--->https://www.youtube.com/watch?v=P2AzlHPjALo
+-->https://youtu.be/xtSHFg47QgU
 
 
--->Dear Oscar, 
+-->Dear {patient_name}, 
 
 We would like to ask you to participate in a study about your sickle cell disease and how you feel about your health and about yourself. 
 
 You can decide for yourself whether you want to participate. But your parents have to sign for you
 
 
--->Dear Cheyenne,  
+-->Dear {patient_name},  
 
 Would you like to take part in a study about your health and living with sickle cell disease? 
 Before you say yes take some time to read about the research and your rights.

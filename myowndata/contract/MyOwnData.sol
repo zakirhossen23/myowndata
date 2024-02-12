@@ -111,7 +111,7 @@ contract MyOwnData {
         string identifier;
         /// Phone of the user FHIR
         string phone;
-        /// Gender of the user FHIR
+        /// Sex of the user FHIR
         string gender;
         /// Birth Date of the user FHIR
         string birth_date;

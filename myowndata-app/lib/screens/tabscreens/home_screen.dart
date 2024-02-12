@@ -49,7 +49,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   };
   var refreshkey = GlobalKey<RefreshIndicatorState>();
   bool boolWearables = false;
-  bool boolGender = false;
+  bool boolSex = false;
   bool boolBirthDate = false;
   bool boolNameGiven = false;
   bool boolNameFamily = false;
@@ -252,7 +252,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   //FHIR switches
   bool FamilyNameSwitch = false;
   bool GivenNameSwitch = false;
-  bool GenderSwitch = false;
+  bool SexSwitch = false;
   bool PhoneSwitch = false;
   bool AboutSwitch = false;
   //Wearable switches
@@ -296,7 +296,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     //FHIR switches
     bool? FamilyNameSwitch;
     bool? GivenNameSwitch;
-    bool? GenderSwitch;
+    bool? SexSwitch;
     bool? PhoneSwitch;
     bool? AboutSwitch;
     //Wearable switches
@@ -317,7 +317,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           }
           ;
           if (type == 2) {
-            GenderSwitch = value;
+            SexSwitch = value;
           }
           if (type == 3) {
             PhoneSwitch = value;
@@ -351,7 +351,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       var given_permission = {
         "family": FamilyNameSwitch,
         "given": GivenNameSwitch,
-        "gender": GenderSwitch,
+        "gender": SexSwitch,
         "phone": PhoneSwitch,
         "about": AboutSwitch,
         "blood": BloodSwitch,
@@ -848,7 +848,7 @@ class _OngoingDialogState extends State<OngoingDialog> {
   //FHIR switches
   bool FamilyNameSwitch = false;
   bool GivenNameSwitch = false;
-  bool GenderSwitch = false;
+  bool SexSwitch = false;
   bool PhoneSwitch = false;
   bool AboutSwitch = false;
   //Wearable switches
@@ -975,14 +975,14 @@ class _OngoingDialogState extends State<OngoingDialog> {
                     ? Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
                         child: SwitchListTile(
-                          value: GenderSwitch,
+                          value: SexSwitch,
                           onChanged: (newValue) {
                             setState(() => {
-                                  GenderSwitch = widget.SetSwitches(3, newValue)
+                                  SexSwitch = widget.SetSwitches(3, newValue)
                                 });
                           },
                           title: Text(
-                            'Gender',
+                            'Sex',
                           ),
                           tileColor: Colors.white,
                           dense: false,

@@ -1,24 +1,30 @@
 // ignore_for_file: use_key_in_widget_constructors, non_constant_identifier_names, unnecessary_new, sized_box_for_whitespace, prefer_const_constructors
 
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:flutter/material.dart';
+import 'package:myowndata/providers/feeling_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myowndata/components/data_edit_item.dart';
 import 'package:myowndata/components/data_edit_dropdown.dart';
 import 'package:myowndata/screens/main_screen.dart';
+import 'package:myowndata/model/airtable_api.dart';
 import 'package:http/http.dart' as http;
 
-class ConnectDataScreen extends StatefulWidget {
+class ConnectDataScreen extends ConsumerStatefulWidget {
+  const ConnectDataScreen({Key? key}) : super(key: key);
+
   @override
-  ConnectDataApp createState() => ConnectDataApp();
+  ConsumerState<ConnectDataScreen> createState() => _ConnectDataScreenState();
 }
 
-class ConnectDataApp extends State<ConnectDataScreen> {
+class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
   TextEditingController GivenNameTXT = new TextEditingController();
   TextEditingController FamilyNameTXT = new TextEditingController();
-  TextEditingController GenderTXT = new TextEditingController(text:null);
+  TextEditingController SexTXT = new TextEditingController(text: null);
   TextEditingController PhoneTXT = new TextEditingController();
   TextEditingController DiseaseTXT = new TextEditingController();
 
@@ -29,41 +35,42 @@ class ConnectDataApp extends State<ConnectDataScreen> {
     super.initState();
   }
 
-  Future<void> UpdateData() async {
-    // final prefs = await SharedPreferences.getInstance();
-    // var userid = prefs.getString("userid");
-    // try {
-    //   var url = Uri.parse('http://localhost:8080/api/POST/UpadateFhir');
-    //   final response = await http.post(url, headers: POSTheader, body: {
-    //     'userid': userid,
-    //     'givenname': GivenNameTXT.text,
-    //     'identifier': IdentifierTXT.text,
-    //     'patientid': FHIRIDTXT.text,
-    //     // 'privatekey': PrivateKeyTXT.text,            ///Hard Coded
-    //     'privatekey':
-    //         "4913b179bdc903d0d7b64cc20c11fc095f5cfe3fe2b68499cbea1913a702df4c",
-    //   });
-    //   var responseData = json.decode(response.body);
-    //   if (responseData['status'] == 200) {
-    //     Navigator.pushReplacement(
-    //       context,
-    //       MaterialPageRoute(
-    //         builder: (context) => MainScreen(),
-    //       ),
-    //     );
-    //   }
-    // } catch (e) {
-    //   ScaffoldMessenger.of(context)
-    //       .showSnackBar(const SnackBar(content: Text("Please try again!")));
-    // }
-
-    setState(() => isLoading = false);
-    return;
-  }
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+
+    var feelingViewmodel = ref.watch(feelingProvider);
+
+    Future<void> UpdateData() async {
+      setState(() => isLoading = true);
+
+      final prefs = await SharedPreferences.getInstance();
+      var userid = prefs.getString("userid");
+      try {
+        final UsersDataTable = base('users_data');
+
+        await UsersDataTable.create({
+          "user_id": userid,
+          "givenname": GivenNameTXT.text,
+          "familyname": FamilyNameTXT.text,
+          "gender": SexTXT.text,
+          "phone": PhoneTXT.text,
+          "about": DiseaseTXT.text
+        });
+      } catch (e) {}
+      setState(() => isLoading = false);
+      feelingViewmodel.updateIndex(1);
+      return;
+    }
+
+    void FinishWork() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MainScreen(),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -76,74 +83,141 @@ class ConnectDataApp extends State<ConnectDataScreen> {
               SizedBox(
                 height: size.height / 8,
               ),
-             
-              Container(
-                //width: 400,
+              IndexedStack(index: feelingViewmodel.selectedIndex, children: [
+                Column(
+                  children: [
+                    Container(
+                      //width: 400,
 
-                margin: const EdgeInsets.only(top: 24, left: 24, bottom: 24),
-                child: Text('Fill your personal details',
-                    style: GoogleFonts.getFont('Lexend Deca',
-                        fontSize: 24,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600)),
-              ),
-              Container(
-                margin: const EdgeInsets.only(left: 24, right: 24),
-                child:
-                    DataEditItem(label: "Given Name", controller: GivenNameTXT),
-              ),
-              Container(
-                margin: const EdgeInsets.only(left: 24, right: 24),
-                child: DataEditItem(
-                    label: "Family Name", controller: FamilyNameTXT),
-              ),
-              Container(
-                  margin: const EdgeInsets.only(left: 24, right: 24),
-                  child: DataEditDropdown(controller: GenderTXT, items: ["Male","Female"],  label: "Gender",)),
-              Container(
-                margin: const EdgeInsets.only(left: 24, right: 24),
-                child: DataEditItem(label: "Phone", controller: PhoneTXT),
-              ),
-              Container(
-                margin: const EdgeInsets.only(left: 24, right: 24),
-                child: DataEditItem(label: "About", controller: DiseaseTXT, isFilled:true),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 0, left: 24, right: 24),
-                child: GestureDetector(
-                  onTap: () async {
-                    if (isLoading) return;
+                      margin:
+                          const EdgeInsets.only(top: 24, left: 24, bottom: 24),
+                      child: Text('Fill your personal details',
+                          style: GoogleFonts.getFont('Lexend Deca',
+                              fontSize: 24,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600)),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 24, right: 24),
+                      child: DataEditItem(
+                          label: "Given Name", controller: GivenNameTXT),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 24, right: 24),
+                      child: DataEditItem(
+                          label: "Family Name", controller: FamilyNameTXT),
+                    ),
+                    Container(
+                        margin: const EdgeInsets.only(left: 24, right: 24),
+                        child: DataEditDropdown(
+                          controller: SexTXT,
+                          items: ["Male", "Female"],
+                          label: "Sex",
+                        )),
+                    Container(
+                      margin: const EdgeInsets.only(left: 24, right: 24),
+                      child: DataEditItem(label: "Phone", controller: PhoneTXT),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 24, right: 24),
+                      child: DataEditItem(
+                          label: "About",
+                          controller: DiseaseTXT,
+                          isFilled: true),
+                    ),
+                    Container(
+                      margin:
+                          const EdgeInsets.only(top: 0, left: 24, right: 24),
+                      child: GestureDetector(
+                        onTap: () async {
+                          if (isLoading) return;
 
-                    setState(() => isLoading = true);
-                    await UpdateData();
-                  },
-                  child: Material(
-                    borderRadius: BorderRadius.circular(8),
-                    elevation: 0,
-                    child: Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: const Color(0xFFF06129),
-                      ),
-                      child: Center(
-                        child: isLoading
-                            ? SizedBox(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                                height: 20.0,
-                                width: 20.0,
-                              )
-                            : Text("Update",style:GoogleFonts.getFont('Lexend Deca',
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500))
+                          setState(() => isLoading = true);
+                          await UpdateData();
+                        },
+                        child: Material(
+                            borderRadius: BorderRadius.circular(8),
+                            elevation: 0,
+                            child: Container(
+                              height: 40,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: const Color(0xFFF06129),
+                              ),
+                              child: Center(
+                                  child: isLoading
+                                      ? SizedBox(
+                                          child: CircularProgressIndicator(
+                                            color: Colors.white,
+                                          ),
+                                          height: 20.0,
+                                          width: 20.0,
+                                        )
+                                      : Text("Update",
+                                          style: GoogleFonts.getFont(
+                                              'Lexend Deca',
+                                              fontSize: 20,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500))),
+                            )),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ),
+                Column(
+                  children: [
+                    SizedBox(
+                      height: size.height / 8,
+                    ),
+                    Center(
+                      child: Image.asset(
+                        "assets/images/welldone.gif",
+                        width: 200,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 20, right: 20, top: 40),
+                      child: Text(
+                          "You have filled your personal information. You can now explore your dashboard",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.getFont('Lexend Deca',
+                              color: Color(0xFF423838),
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700)),
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      GestureDetector(
+                        onTap: () async {
+                           FinishWork();
+                        },
+                        child: Material(
+                          borderRadius: BorderRadius.circular(8),
+                          elevation: 2,
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                                top: 0, left: 10, right: 10, bottom: 0),
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: const Color(0xFFF06129),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Finish",
+                                style: GoogleFonts.getFont('Lexend Deca',
+                                    fontSize: 16, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ],
+                )
+              ]),
             ],
           ),
         ),

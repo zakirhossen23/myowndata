@@ -33,9 +33,9 @@ class base {
     }
   }
 
-  Future<List<Map<String, dynamic>>> select({String? filterBy}) async {
+  Future<List<Map<String, dynamic>>> select({String? filterBy, List<Map<String, String>>? sortBy}) async {
     final dio = Dio();
-    final queryParams = filterBy != null ? {'filterByFormula': filterBy} : null;
+    var queryParams = filterBy != null && sortBy != null ? {'filterByFormula': filterBy,'sort':sortBy} : {'filterByFormula': filterBy};
 
     final response = await dio.get(
       'https://api.airtable.com/v0/$baseId/$tableName',

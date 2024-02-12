@@ -41,7 +41,7 @@ class _MyDataScreenState extends ConsumerState<MyDataScreen> {
 
   var refreshkey = GlobalKey<RefreshIndicatorState>();
   bool boolWearables = false;
-  bool boolGender = false;
+  bool boolSex = false;
   bool boolBirthDate = false;
   bool boolNameGiven = false;
   bool boolNameFamily = false;
@@ -50,8 +50,8 @@ class _MyDataScreenState extends ConsumerState<MyDataScreen> {
   String wrappedData = "";
   Future<void> GenerateQRCode() async {
     var choosenData = [];
-    if (boolGender) {
-      choosenData.add({"Gender": PatientDetails['gender']});
+    if (boolSex) {
+      choosenData.add({"Sex": PatientDetails['gender']});
     }
     if (boolBirthDate) {
       choosenData.add({"Birth Date": PatientDetails['birth-date']});
@@ -441,7 +441,7 @@ class _MyDataScreenState extends ConsumerState<MyDataScreen> {
                                 children: [
                                   CheckboxListTile(
                                     title: Text(
-                                      'Gender',
+                                      'Sex',
                                       style: GoogleFonts.getFont(
                                         'Lexend',
                                         color: Colors.black,
@@ -454,10 +454,10 @@ class _MyDataScreenState extends ConsumerState<MyDataScreen> {
                                         'Lexend Deca',
                                       ),
                                     ),
-                                    value: this.boolGender,
+                                    value: this.boolSex,
                                     onChanged: (value) {
                                       setState(() {
-                                        boolGender = value!;
+                                        boolSex = value!;
                                       });
                                     },
                                   ),
