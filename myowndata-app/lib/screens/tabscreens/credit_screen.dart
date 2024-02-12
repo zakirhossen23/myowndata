@@ -81,30 +81,34 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
 
       final SurvyesTable = base('surveys');
 
-      filterByFormula = ' {study_id} = \'${ongoing_study_record['id']}\'';
+      filterByFormula = ' {study_id} = \'${ongoing_records[0]['study_id']}\'';
       final surveys_records =
           await SurvyesTable.select(filterBy: (filterByFormula));
-      setState(() {
-        //Surveys
-        var SurveyAllElement = surveys_records;
-        // var SurveyAllCompletedElement = decoded_data['Completed'];
-        var SurveyAllCompletedElement = [];
-        int totalcredit = 0;
+      //Surveys
+      var SurveyAllElement = surveys_records;
+      // var SurveyAllCompletedElement = decoded_data['Completed'];
+      final CompletedSurvyesTable = base('completed_surveys');
+      filterByFormula =
+          'AND({study_id} = \'${ongoing_records[0]['study_id']}\',{user_id} = \'${userid}\')';
+      var SurveyAllCompletedElement =
+          await CompletedSurvyesTable.select(filterBy: filterByFormula);
 
-        //Other ongoing surveys
-        for (var i = 0; i < SurveyAllElement.length; i++) {
-          var SurveyElement = SurveyAllElement[i];
-          var completedSurvey = SurveyAllCompletedElement.where(
-              (e) => e['survey_id'] == SurveyElement['id']);
+      int totalcredit = 0;
 
-          if (completedSurvey.length > 0) {
-            totalcredit += int.parse(SurveyElement['reward'].toString());
-          }
+      //Other ongoing surveys
+      for (var i = 0; i < SurveyAllElement.length; i++) {
+        var SurveyElement = SurveyAllElement[i];
+        var completedSurvey = SurveyAllCompletedElement.where(
+            (e) => e['survey_id'] == SurveyElement['id']);
+
+        if (completedSurvey.length > 0) {
+          totalcredit += int.parse(SurveyElement['reward'].toString());
         }
+      }
+      setState(() {
         userDetails['ongoingcredit'] = totalcredit;
       });
     }
-
   }
 
   Future<void> GetUserData(String userid) async {

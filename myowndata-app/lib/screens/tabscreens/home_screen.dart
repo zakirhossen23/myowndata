@@ -60,24 +60,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future<void> GetAvialbleData() async {
     avilableStudies = [];
-  final StudiesTable = base('studies');
+    final StudiesTable = base('studies');
 
     var filterByFormula = 'NOT(RECORD_ID() = \'${StudyId}\')';
     final avialable_records =
         await StudiesTable.select(filterBy: (filterByFormula));
-    if (avialable_records.length > 0){
+    if (avialable_records.length > 0) {
       avialable_records.forEach((element) => {
-          setState(() {
-            avilableStudies.add(Study(
-                id: element['id'],
-                title: element['title'],
-                image: element['image'],
-                permission: element['permissions']));
-          })
-        });
+            setState(() {
+              avilableStudies.add(Study(
+                  id: element['id'],
+                  title: element['title'],
+                  image: element['image'],
+                  permission: element['permissions']));
+            })
+          });
     }
-
-
   }
 
   Future<void> GetOngoingData() async {
@@ -140,37 +138,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final surveys_records =
           await SurvyesTable.select(filterBy: (filterByFormula));
       dummyActions = [];
-      setState(() {
-        //Surveys
-        var SurveyAllElement = surveys_records;
-        // var SurveyAllCompletedElement = decoded_data['Completed'];
-        var SurveyAllCompletedElement = [];
-        int totalcredit = 0;
-        bool first_today = false;
+      //Surveys
+      var SurveyAllElement = surveys_records;
+      // var SurveyAllCompletedElement = decoded_data['Completed'];
 
-        //Other ongoing surveys
-        for (var i = 0; i < SurveyAllElement.length; i++) {
-          var SurveyElement = SurveyAllElement[i];
-          var completedSurvey = SurveyAllCompletedElement.where(
-              (e) => e['survey_id'] == SurveyElement['id']);
-          String timeToday = "Today";
+      final CompletedSurvyesTable = base('completed_surveys');
+      filterByFormula =
+          'AND({study_id} = \'${ongoing_records[0]['study_id']}\',{user_id} = \'${userid}\')';
+      var SurveyAllCompletedElement =
+          await CompletedSurvyesTable.select(filterBy: filterByFormula);
+      int totalcredit = 0;
+      bool first_today = false;
 
-          if (completedSurvey.length > 0) {
-            var completedData = completedSurvey.toList()[0];
-            String completedDate = completedData['date'];
-            timeToday =
-                Jiffy(DateTime.parse(completedDate)).fromNow(); // a year ago
-            totalcredit += int.parse(SurveyElement['reward'].toString());
+      //Other ongoing surveys
+      for (var i = 0; i < SurveyAllElement.length; i++) {
+        var SurveyElement = SurveyAllElement[i];
+        var completedSurvey = SurveyAllCompletedElement.where(
+            (e) => e['survey_id'] == SurveyElement['id']);
+        String timeToday = "Today";
+
+        if (completedSurvey.length > 0) {
+          var completedData = completedSurvey.toList()[0];
+          String completedDate = completedData['date'];
+          timeToday =
+              Jiffy(DateTime.parse(completedDate)).fromNow(); // a year ago
+          totalcredit += int.parse(SurveyElement['reward'].toString());
+        }
+        bool status = completedSurvey.length > 0;
+
+        if (!status) {
+          timeToday = "Tomorrow";
+          if (!first_today) {
+            timeToday = "Today";
+            first_today = true;
           }
-          bool status = completedSurvey.length > 0;
-
-          if (!status) {
-            timeToday = "Tomorrow";
-            if (!first_today) {
-              timeToday = "Today";
-              first_today = true;
-            }
-          }
+        }
+        setState(() {
           dummyActions.add(
             StudyAction(
                 id: SurveyElement['id'].toString(),
@@ -178,11 +181,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 content: SurveyElement['name'],
                 isDone: status),
           );
-        }
+        });
+      }
+      setState(() {
         userDetails['ongoingcredit'] = totalcredit;
       });
     }
-
   }
 
   Future<void> GetUserData(String userid) async {
