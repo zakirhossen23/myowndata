@@ -38,11 +38,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     "x-api-key": "Qi8TXQVe1C2zxiYOdKKm7RQk6qz0h7n19zu1RMg5"
   };
 
-  int userid = 0;
+  String userid = "";
+  String StudyId = "";
   int startStudy = 0;
   String ImageLink = "https://i.postimg.cc/SsxGw5cZ/person.jpg";
   var userDetails = {
-    "userid": -1,
+    "userid": "",
     "credits": 0,
     "ongoingcredit": null,
     "totalongoingcredit": null
@@ -59,25 +60,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future<void> GetAvialbleData() async {
     avilableStudies = [];
-    var url = Uri.parse(
-        'http://localhost:8080/api/GET/Study/GetAvailableStudy?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
-    }
+  final StudiesTable = base('studies');
 
-    var responseData = json.decode(response.body);
-
-    var data = (responseData['value']);
-    var allStudies = json.decode(data);
-    allStudies.forEach((element) => {
+    var filterByFormula = 'NOT(RECORD_ID() = \'${StudyId}\')';
+    final avialable_records =
+        await StudiesTable.select(filterBy: (filterByFormula));
+    if (avialable_records.length > 0){
+      avialable_records.forEach((element) => {
           setState(() {
             avilableStudies.add(Study(
                 id: element['id'],
@@ -86,11 +75,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 permission: element['permissions']));
           })
         });
+    }
+
+
   }
 
   Future<void> GetOngoingData() async {
     ongoingStudies = {
-      "studyid": -1,
+      "studyid": "",
       "title": "",
       "description": "",
       "image": "",
@@ -98,84 +90,63 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       "totalprice": 0
     };
 
-
     final OngoingStudiesTable = base('ongoing_studies');
 
-     var filterByFormula = ' {user_id} = \'${userid}\'';
-      final ongoing_records =
-          await OngoingStudiesTable.select(filterBy: (filterByFormula));
-    
-    
-    final StudiesTable = base('studies');
+    var filterByFormula = ' {user_id} = \'${userid}\'';
+    final ongoing_records =
+        await OngoingStudiesTable.select(filterBy: (filterByFormula));
 
-    final ongoing_study_record =await StudiesTable.find(ongoing_records[0]['study_id']);
-
-
-
-
-    dummyActions = [];
-    var url = Uri.parse('http://localhost:8080/api/GET/Study/GetOngoingStudy?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      var responseData = json.decode(response_draft.body);
-
-      var data = (responseData['value']);
-
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else if (data == "None") {
-        break;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
-    }
-    var responseData = json.decode(response.body);
-
-    var data = (responseData['value']);
-
-    if (data != "None") {
+    if (ongoing_records.length > 0) {
       setState(() {
         isOngoingStudy = true;
       });
-      var decoded_data = json.decode(data);
-      try {
-        //Studies
-        var element = decoded_data['Study'];
-        setState(() {
-          ongoingStudies['studyid'] = element['id'];
-          ongoingStudies['title'] = element['title'];
-          ongoingStudies['image'] = element['image'];
-          ongoingStudies['description'] = element['description'];
-          ongoingStudies['totalprice'] = element['budget'];
-          userDetails['totalongoingcredit'] =
-              element['budget'] != null ? element['budget'] : 0;
-        });
-      } catch (e) {}
-
+      final StudiesTable = base('studies');
+      final ongoing_study_record =
+          await StudiesTable.find(ongoing_records[0]['study_id']);
       setState(() {
-        //Surveys
-        var SurveyAllElement = decoded_data['Survey'];
-        var SurveyAllCompletedElement = decoded_data['Completed'];
-        int totalcredit = 0;
-        bool first_today = false;
+        ongoingStudies['studyid'] = ongoing_study_record['id'];
+        ongoingStudies['title'] = ongoing_study_record['title'];
+        ongoingStudies['image'] = ongoing_study_record['image'];
+        ongoingStudies['description'] = ongoing_study_record['description'];
+        ongoingStudies['totalprice'] =
+            ongoing_study_record['total_spending_limit'];
+        userDetails['totalongoingcredit'] =
+            ongoing_study_record['total_spending_limit'] != null
+                ? ongoing_study_record['total_spending_limit']
+                : 0;
+      });
 
+      final InformedConsentTable = base('informed_consents');
+      filterByFormula =
+          'AND({user_id} = \'${userid}\',  {study_id} = \'${ongoing_records[0]['study_id']}\')';
+      final completedIC =
+          await InformedConsentTable.select(filterBy: filterByFormula);
+      if (completedIC.length > 0) {
         //Informed Consent
         setState(() {
-          if (decoded_data['CompletedInformed'] != "False" &&
-              decoded_data['CompletedInformed'] != null) {
-            String timeToday =
-                Jiffy(DateTime.parse(decoded_data['CompletedInformed']['date']))
-                    .fromNow();
-            onGoingInformedConsent = StudyAction(
-                id: "informed_consent",
-                when: timeToday,
-                content: "Informed Consent",
-                isDone: true);
-          }
+          String timeToday =
+              Jiffy(DateTime.parse(completedIC[0]['date'])).fromNow();
+          onGoingInformedConsent = StudyAction(
+              id: "informed_consent",
+              when: timeToday,
+              content: "Informed Consent",
+              isDone: true);
         });
+      }
+
+      final SurvyesTable = base('surveys');
+
+      filterByFormula = ' {study_id} = \'${ongoing_records[0]['study_id']}\'';
+      final surveys_records =
+          await SurvyesTable.select(filterBy: (filterByFormula));
+      dummyActions = [];
+      setState(() {
+        //Surveys
+        var SurveyAllElement = surveys_records;
+        // var SurveyAllCompletedElement = decoded_data['Completed'];
+        var SurveyAllCompletedElement = [];
+        int totalcredit = 0;
+        bool first_today = false;
 
         //Other ongoing surveys
         for (var i = 0; i < SurveyAllElement.length; i++) {
@@ -211,28 +182,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         userDetails['ongoingcredit'] = totalcredit;
       });
     }
+
   }
 
-  Future<void> GetUserData(int userid) async {
-    var url = Uri.parse(
-        'http://localhost:8080/api/GET/getUserDetails?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
-    }
-    var responseData = json.decode(response.body);
-
-    var dataUD = (responseData['value']);
+  Future<void> GetUserData(String userid) async {
+    final UsersTable = base('users');
+    var userdata = await UsersTable.find(userid);
 
     setState(() {
-      var imageData = dataUD['image'];
+      var imageData = userdata['image'];
       ImageLink = imageData;
     });
   }
@@ -241,7 +199,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userid = int.parse(prefs.getString("userid").toString());
+      userid = (prefs.getString("userid").toString());
+      StudyId = (prefs.getString("studyid").toString());
     });
 
     GetAvialbleData();
@@ -263,7 +222,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   var dummyActions = [];
   var ongoingStudies = {
-    "studyid": -1,
+    "studyid": "",
     "title": "",
     "description": "",
     "image": "",
@@ -977,9 +936,8 @@ class _OngoingDialogState extends State<OngoingDialog> {
                         child: SwitchListTile(
                           value: SexSwitch,
                           onChanged: (newValue) {
-                            setState(() => {
-                                  SexSwitch = widget.SetSwitches(3, newValue)
-                                });
+                            setState(() =>
+                                {SexSwitch = widget.SetSwitches(3, newValue)});
                           },
                           title: Text(
                             'Sex',

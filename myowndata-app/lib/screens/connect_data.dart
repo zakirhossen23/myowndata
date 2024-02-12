@@ -58,6 +58,8 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
           "phone": PhoneTXT.text,
           "about": DiseaseTXT.text
         });
+        final UsersTable = base('users');
+        await UsersTable.update(userid!, {"image": ImageTXT.text});
       } catch (e) {}
       setState(() => isLoading = false);
       feelingViewmodel.updateIndex(1);
@@ -74,6 +76,9 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
     }
 
     void UpdateImage() async {
+      setState(() {
+        ImageTXT.text = ImageTXT.text;
+      });
       Navigator.pop(context);
     }
 

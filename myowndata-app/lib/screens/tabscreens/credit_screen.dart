@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myowndata/components/data_edit_item.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:myowndata/model/airtable_api.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,10 +34,10 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
     "Content-Type": "application/x-www-form-urlencoded"
   };
 
-  int userid = 0;
+  String userid = "";
 
   var userDetails = {
-    "userid": -1,
+    "userid": "",
     "credits": 0,
     "ongoingcredit": null,
     "totalongoingcredit": null
@@ -44,7 +45,7 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
 
   Future<void> GetOngoingData() async {
     ongoingStudies = {
-      "studyid": -1,
+      "studyid": "",
       "title": "",
       "description": "",
       "image": "",
@@ -52,91 +53,66 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
       "totalprice": 0
     };
 
-    var url = Uri.parse(
-        'http://localhost:8080/api/GET/Study/GetOngoingStudy?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      var responseData = json.decode(response_draft.body);
-      var data = (responseData['value']);
+    final OngoingStudiesTable = base('ongoing_studies');
 
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else if (data == "None") {
-        break;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
-    }
-    var responseData = json.decode(response.body);
+    var filterByFormula = ' {user_id} = \'${userid}\'';
+    final ongoing_records =
+        await OngoingStudiesTable.select(filterBy: (filterByFormula));
 
-    var data = (responseData['value']);
-
-    if (data != "None") {
+    if (ongoing_records.length > 0) {
       setState(() {
         isOngoingStudy = true;
       });
-      var decoded_data = json.decode(data);
-      try {
-        //Studies
-        var element = decoded_data['Study'];
-        setState(() {
-          ongoingStudies['studyid'] = element['id'];
-          ongoingStudies['title'] = element['title'];
-          ongoingStudies['image'] = element['image'];
-          ongoingStudies['description'] = element['description'];
-          ongoingStudies['totalprice'] = element['budget'];
-          userDetails['totalongoingcredit'] =
-              element['budget'] != null ? element['budget'] : 0;
-        });
-      } catch (e) {}
+      final StudiesTable = base('studies');
+      final ongoing_study_record =
+          await StudiesTable.find(ongoing_records[0]['study_id']);
+      setState(() {
+        ongoingStudies['studyid'] = ongoing_study_record['id'];
+        ongoingStudies['title'] = ongoing_study_record['title'];
+        ongoingStudies['image'] = ongoing_study_record['image'];
+        ongoingStudies['description'] = ongoing_study_record['description'];
+        ongoingStudies['totalprice'] =
+            ongoing_study_record['total_spending_limit'];
+        userDetails['totalongoingcredit'] =
+            ongoing_study_record['total_spending_limit'] != null
+                ? ongoing_study_record['total_spending_limit']
+                : 0;
+      });
 
+      final SurvyesTable = base('surveys');
+
+      filterByFormula = ' {study_id} = \'${ongoing_study_record['id']}\'';
+      final surveys_records =
+          await SurvyesTable.select(filterBy: (filterByFormula));
       setState(() {
         //Surveys
-        var SurveyAllElement = decoded_data['Survey'];
-        var SurveyAllCompletedElement = decoded_data['Completed'];
+        var SurveyAllElement = surveys_records;
+        // var SurveyAllCompletedElement = decoded_data['Completed'];
+        var SurveyAllCompletedElement = [];
         int totalcredit = 0;
+
+        //Other ongoing surveys
         for (var i = 0; i < SurveyAllElement.length; i++) {
           var SurveyElement = SurveyAllElement[i];
           var completedSurvey = SurveyAllCompletedElement.where(
               (e) => e['survey_id'] == SurveyElement['id']);
-          String timeToday = "Today";
-          if (completedSurvey.length > 0) {
-            var completedData = completedSurvey.toList()[0];
-            String completedDate = completedData['date'];
-            String timeToday =
-                Jiffy(DateTime.parse(completedDate)).fromNow(); // a year ago
 
+          if (completedSurvey.length > 0) {
             totalcredit += int.parse(SurveyElement['reward'].toString());
           }
         }
         userDetails['ongoingcredit'] = totalcredit;
       });
     }
+
   }
 
-  Future<void> GetUserData(int userid) async {
-    var url = Uri.parse(
-        'http://localhost:8080/api/GET/getUserDetails?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
-    }
-    var responseData = json.decode(response.body);
-
-    var dataUD = (responseData['value']);
+  Future<void> GetUserData(String userid) async {
+    final UsersTable = base('users');
+    var userdata = await UsersTable.find(userid);
 
     setState(() {
-      userDetails["credits"] = dataUD['credits'] / 1e6;
+      userDetails["credits"] = userdata['credits'];
     });
   }
 
@@ -144,7 +120,7 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userid = int.parse(prefs.getString("userid").toString());
+      userid = (prefs.getString("userid").toString());
     });
 
     GetUserData(userid);

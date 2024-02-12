@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myowndata/model/airtable_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -35,7 +36,8 @@ class _MyDataScreenState extends ConsumerState<MyDataScreen> {
     "x-api-key": "Qi8TXQVe1C2zxiYOdKKm7RQk6qz0h7n19zu1RMg5"
   };
 
-  int userid = 0;
+  String userid = "";
+  String StudyId = "";
 
   String ImageLink = "https://i.postimg.cc/SsxGw5cZ/person.jpg";
 
@@ -73,55 +75,39 @@ class _MyDataScreenState extends ConsumerState<MyDataScreen> {
     wrappedData = jsonEncode(choosenData);
   }
 
-  Future<void> GetFHIRData(int userid) async {
-    var url = Uri.parse(
-        'http://localhost:8080/api/GET/getUserDetails?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
-    }
-    var responseData = json.decode(response.body);
-
-    var dataUD = (responseData['value']);
+  Future<void> GetFHIRData(String userid) async {
+    final UsersTable = base('users');
+    var userdata = await UsersTable.find(userid);
 
     setState(() {
-      var imageData = dataUD['image'];
+      var imageData = userdata['image'];
       ImageLink = imageData;
     });
 
-    var urlFH = Uri.parse(
-        'http://localhost:8080/api/GET/getFhir?userid=${int.parse(userid.toString())}');
-    final responseFH = await http.get(urlFH);
-    var responseDataFH = json.decode(responseFH.body);
+    final UserDataTable = base('users_data');
 
-    if (responseDataFH['value'] != null) {
-      var data = (responseDataFH['value']);
-      var allData = data;
-      try {
-        setState(() {
-          PatientDetails['gender'] = allData['gender'];
-          PatientDetails['birth-date'] = allData['birth_date'];
-          PatientDetails['name-family'] = allData['family_name'];
-          PatientDetails['name-given'] = allData['given_name'];
-          PatientDetails['phone'] = allData['phone'];
-          PatientDetails['disease'] = allData['about'];
-        });
-      } catch (e) {}
+    var filterByFormula = ' {user_id} = \'${userid}\'';
+    final User_records =
+        await UserDataTable.select(filterBy: (filterByFormula));
+    if (User_records.length > 0) {
+      setState(() {
+        PatientDetails['gender'] = User_records[0]['gender'];
+        PatientDetails['birth-date'] = userdata['birth_date'];
+        PatientDetails['name-family'] = User_records[0]['familyname'];
+        PatientDetails['name-given'] = User_records[0]['givenname'];
+        PatientDetails['phone'] = User_records[0]['phone'];
+        PatientDetails['disease'] = User_records[0]['about'];
+      });
     }
+
   }
 
   Future<void> GetAccountData() async {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userid = int.parse(prefs.getString("userid").toString());
+      userid = (prefs.getString("userid").toString());
+      StudyId = (prefs.getString("studyid").toString());
     });
 
     GetFHIRData(userid);
@@ -142,12 +128,10 @@ class _MyDataScreenState extends ConsumerState<MyDataScreen> {
       ImageLink = _textFieldController.text;
     });
     final prefs = await SharedPreferences.getInstance();
-    int userid = int.parse(prefs.getString("userid").toString());
-    var url = Uri.parse('http://localhost:8080/api/POST/UpadateImage');
-    await http.post(url, headers: POSTheader, body: {
-      'userid': userid.toString(),
-      'image': _textFieldController.text
-    });
+    String userid = (prefs.getString("userid").toString());
+       final UsersTable = base('users');
+        await UsersTable.update(userid, {"image": _textFieldController.text});
+
     Navigator.pop(context);
   }
 
@@ -202,7 +186,7 @@ class _MyDataScreenState extends ConsumerState<MyDataScreen> {
                 Container(
                     margin: EdgeInsets.only(left: 10, top: 26, bottom: 50),
                     height: 100,
-                    child: Text("FHIR data",
+                    child: Text("Persoanl Information",
                         style:
                             GoogleFonts.getFont('Lexend Deca', fontSize: 24))),
                 Positioned(

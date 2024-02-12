@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myowndata/model/airtable_api.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,7 +38,8 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen> {
   };
   var supportStatus = {"level1": false, "level2": false};
 
-  int userid = 0;
+  String userid = "";
+  String StudyId = "";
 
   bool isloading = true;
 
@@ -47,52 +49,29 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen> {
 
   Future<void> GetOngoingData() async {
     UpdateLoading(true);
-    var url = Uri.parse(
-        'http://localhost:8080/api/GET/Study/GetOngoingStudy?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      var responseData = json.decode(response_draft.body);
-
-      var data = (responseData['value']);
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else if (data == "None") {
-        break;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
+    final InformedConsentTable = base('informed_consents');
+    var filterByFormula =
+        'AND({user_id} = \'${userid}\',  {study_id} = \'${StudyId}\')';
+    final completedIC =
+        await InformedConsentTable.select(filterBy: filterByFormula);
+    if (completedIC.length > 0) {
+      //Informed Consent
+      setState(() {supportStatus['level1'] = true;});
     }
-    var responseData = json.decode(response.body);
+// setState(() {
+//         //Surveys
+//         var SurveyAllElement = decoded_data['Survey'];
+//         var SurveyAllCompletedElement = decoded_data['Completed'];
 
-    var data = (responseData['value']);
-
-    if (data != "None") {
-      var decoded_data = json.decode(data);
-
-      setState(() {
-        if (decoded_data['CompletedInformed'] != "False" &&
-            decoded_data['CompletedInformed'] != null)
-          supportStatus['level1'] = true;
-      });
-
-      setState(() {
-        //Surveys
-        var SurveyAllElement = decoded_data['Survey'];
-        var SurveyAllCompletedElement = decoded_data['Completed'];
-
-        for (var i = 0; i < SurveyAllElement.length; i++) {
-          var SurveyElement = SurveyAllElement[i];
-          var completedSurvey = SurveyAllCompletedElement.where(
-              (e) => e['survey_id'] == SurveyElement['id']);
-          if (completedSurvey.length > 0) {
-            supportStatus['level2'] = true;
-          }
-        }
-      });
-    }
+//         for (var i = 0; i < SurveyAllElement.length; i++) {
+//           var SurveyElement = SurveyAllElement[i];
+//           var completedSurvey = SurveyAllCompletedElement.where(
+//               (e) => e['survey_id'] == SurveyElement['id']);
+//           if (completedSurvey.length > 0) {
+//             supportStatus['level2'] = true;
+//           }
+//         }
+//       });
     UpdateLoading(false);
   }
 
@@ -100,7 +79,8 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen> {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userid = int.parse(prefs.getString("userid").toString());
+      userid = (prefs.getString("userid").toString());
+      StudyId = (prefs.getString("studyid").toString());
     });
     GetOngoingData();
   }
@@ -120,22 +100,6 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen> {
       );
     }
 
-    // return      isloading == true
-    //         ?
-    //             Expanded(
-    //                 child: Center(
-    //                     child: Container(
-    //                         height: 150,
-    //                         width: 150,
-    //                         child: const SizedBox(
-    //                           child: CircularProgressIndicator(
-    //                             color: Color(0xFFF06129),
-    //                           ),
-    //                           height: 150.0,
-    //                           width: 150.0,
-    //                         ))))
-
-    //         :
     return Container(
       height: size.height,
       width: size.width,

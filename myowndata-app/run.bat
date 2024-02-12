@@ -1,1 +1,1 @@
-flutter run --release --web-renderer html  -d web-server --web-port=3000
+flutter run --release --web-renderer canvaskit  -d web-server --web-port=3000

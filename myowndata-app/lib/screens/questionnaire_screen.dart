@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:myowndata/model/airtable_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myowndata/model/question.dart';
 import 'package:myowndata/providers/feeling_provider.dart';
@@ -26,6 +27,9 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
+  String userId = "";
+  String StudyId = "";
+  String SurveyId = "";
   var allSections = [];
   var allCategory = [
     {"name": "", "image": ""}
@@ -33,21 +37,24 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
   bool isloading = true;
   Future<void> GetData() async {
     final prefs = await SharedPreferences.getInstance();
-    String surveyid = prefs.getString("surveyid").toString();
+    SurveyId = prefs.getString("surveyid").toString();
+    userId = (prefs.getString("userid").toString());
+    StudyId = (prefs.getString("studyid").toString());
+
     allSections = [];
     allCategory = [];
 
-    var url = Uri.parse(
-        'http://localhost:8080/api/GET/Study/Survey/GetSurveyDetails?surveyid=${surveyid}');
-    final response = await http.get(url);
-    var responseData = json.decode(response.body);
+    final SurveyCategoriesTable = base('survey_categories');
 
-    var data = (responseData['value']);
+    final allCT = await SurveyCategoriesTable.select();
 
-    var SurveyData = data['Survey'];
+    final SurveyDataTable = base('survey_data');
 
-    var allSect = data['Sections'];
-    var allCT = data['Categories'];
+    var filterByFormula = ' {survey_id} = \'${SurveyId}\'';
+
+    final allSect =
+        await SurveyCategoriesTable.select(filterBy: filterByFormula);
+
     setState(() {
       for (var i = 0; i < allCT.length; i++) {
         var element = allCT[i];
@@ -61,9 +68,7 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
         var categoryimage = allCategory.firstWhere(
             (element) => element['name'] == sectElement['category']);
         var object = {
-          "studyid": SurveyData['study_id'].toString(),
-          "surveyid": SurveyData['id'],
-          "sectionid": i,
+          "sectionid": sectElement['id'],
           "category": sectElement['category'],
           "description": sectElement['description'],
           "image": categoryimage['image'],
