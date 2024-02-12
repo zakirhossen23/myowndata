@@ -42,6 +42,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
   String study_id = "-1";
   String UserName = "";
   bool isloading = true;
+  Map<String, dynamic> StudyDetails = {};
 
   void UpdateLoading(bool status) {
     isloading = status;
@@ -145,6 +146,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
         study_title = studytitle;
         isloading = false;
         study_id = studyid;
+        StudyDetails = newStudy;
       });
     }
 
@@ -178,6 +180,10 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
       "calories": true
     };
 
+    final StudiesTable = base('studies');
+
+    StudiesTable.update(
+        studyid, {"contributors": StudyDetails['contributors'] + 1});
     String JsonMadePermission = given_permission.toString();
 
     final OngoingStudiesTable = base('ongoing_studies');
@@ -407,7 +413,7 @@ class _InformConsentState extends State<InformConsent> {
                     ),
                     Container(
                       width: size.width,
-                      margin: const EdgeInsets.only(left: 16,  right: 16),
+                      margin: const EdgeInsets.only(left: 16, right: 16),
                       padding: const EdgeInsets.only(bottom: 12),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
@@ -422,15 +428,13 @@ class _InformConsentState extends State<InformConsent> {
                       ),
                     ),
                     Visibility(
-                      visible:   questionnaireViewmodel.selectedIndex >
-                                            0 && questionnaireViewmodel.selectedIndex < subjects.length+1,
-                      child: 
-                     Container(
-                      height: 100,
-                      child: Text(""),
-                    )
-                    )
-                   
+                        visible: questionnaireViewmodel.selectedIndex > 0 &&
+                            questionnaireViewmodel.selectedIndex <
+                                subjects.length + 1,
+                        child: Container(
+                          height: 100,
+                          child: Text(""),
+                        ))
                   ]),
             ));
       }).toList());
@@ -549,7 +553,7 @@ class _InformConsentState extends State<InformConsent> {
                   children: [
                     Container(
                       width: size.width,
-                      height: size.height - 122 ,
+                      height: size.height - 122,
                       child: ListView.builder(
                         padding: const EdgeInsets.only(bottom: 80),
                         itemCount: allDeclerationOfConsent.length,
@@ -688,85 +692,41 @@ class _InformConsentState extends State<InformConsent> {
                         index: questionnaireViewmodel.selectedIndex,
                         children: renderSections(),
                       ),
-                     
+
                       // Bottom navigation buttons
-                       Visibility(
-                                    visible:
-                                        questionnaireViewmodel.selectedIndex >
-                                            0 && questionnaireViewmodel.selectedIndex < subjects.length+1,
-                                    child: Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            decoration: BoxDecoration(color: Colors.white),
-                            child: Column(
-                              children: [
-                               Row(
-                                      //Hard Coded
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Visibility(
-                                          visible: questionnaireViewmodel
-                                                  .selectedIndex >
-                                              1,
-                                          child: Container(
-                                            width: (size.width - (24 * 3)) / 2,
-                                            margin: const EdgeInsets.only(
-                                                top: 20, left: 24, bottom: 24),
-                                            child: GestureDetector(
-                                              onTap: () async {
-                                                questionnaireViewmodel
-                                                    .updateIndex(
-                                                        questionnaireViewmodel
-                                                                .selectedIndex -
-                                                            1);
-                                                _scrollToTop();
-                                              },
-                                              child: Material(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                elevation: 2,
-                                                child: Container(
-                                                  height: 40,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    color:
-                                                        const Color(0xFFF06129),
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      "Previous",
-                                                      style:
-                                                          GoogleFonts.getFont(
-                                                              'Lexend Deca',
-                                                              fontSize: 16,
-                                                              color:
-                                                                  Colors.white),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: questionnaireViewmodel
-                                                      .selectedIndex >
-                                                  0
-                                              ? (size.width - (24 * 3)) / 2
-                                              : (size.width - (24 * 3)),
+                      Visibility(
+                        visible: questionnaireViewmodel.selectedIndex > 0 &&
+                            questionnaireViewmodel.selectedIndex <
+                                subjects.length + 1,
+                        child: Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              decoration: BoxDecoration(color: Colors.white),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    //Hard Coded
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Visibility(
+                                        visible: questionnaireViewmodel
+                                                .selectedIndex >
+                                            1,
+                                        child: Container(
+                                          width: (size.width - (24 * 3)) / 2,
                                           margin: const EdgeInsets.only(
-                                              left: (24),
-                                              top: 20,
-                                              right: 24,
-                                              bottom: 24),
+                                              top: 20, left: 24, bottom: 24),
                                           child: GestureDetector(
                                             onTap: () async {
-                                              GoToNextUrl();
+                                              questionnaireViewmodel
+                                                  .updateIndex(
+                                                      questionnaireViewmodel
+                                                              .selectedIndex -
+                                                          1);
+                                              _scrollToTop();
                                             },
                                             child: Material(
                                               borderRadius:
@@ -782,7 +742,7 @@ class _InformConsentState extends State<InformConsent> {
                                                 ),
                                                 child: Center(
                                                   child: Text(
-                                                    "Next",
+                                                    "Previous",
                                                     style: GoogleFonts.getFont(
                                                         'Lexend Deca',
                                                         fontSize: 16,
@@ -793,12 +753,53 @@ class _InformConsentState extends State<InformConsent> {
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    )
-                              ],
-                            ),
-                          )),
-                   ) ],
+                                      ),
+                                      Container(
+                                        width: questionnaireViewmodel
+                                                    .selectedIndex >
+                                                0
+                                            ? (size.width - (24 * 3)) / 2
+                                            : (size.width - (24 * 3)),
+                                        margin: const EdgeInsets.only(
+                                            left: (24),
+                                            top: 20,
+                                            right: 24,
+                                            bottom: 24),
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            GoToNextUrl();
+                                          },
+                                          child: Material(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            elevation: 2,
+                                            child: Container(
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                color: const Color(0xFFF06129),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "Next",
+                                                  style: GoogleFonts.getFont(
+                                                      'Lexend Deca',
+                                                      fontSize: 16,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )),
+                      )
+                    ],
                   ),
                 )
               ]);
@@ -1388,7 +1389,9 @@ class _QuestionWidget extends State<QuestionWidget> {
                           letterSpacing: 0.82,
                           fontWeight: FontWeight.w400),
                     ),
-                    SizedBox(height: 25,),
+                    SizedBox(
+                      height: 25,
+                    ),
                     Text(
                       "Questions for researcher (Optional):",
                       textAlign: TextAlign.left,

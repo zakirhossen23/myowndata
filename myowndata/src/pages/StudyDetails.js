@@ -20,7 +20,6 @@ function StudyDetails() {
 	const [tabIndex, setTabIndex] = useState(0);
 	const [UpdatemodalShow, setModalShow] = useState(false);
 	const [CreateSurveymodalShow, setSurveyModalShow] = useState(false);
-	const [ContributorsmodalShow, setContributorsmodalShow] = useState(false);
 	const [LoadingSurvey, setLoadingSurvey] = useState(false);
 	const [LoadingInformed, setLoadingInformed] = useState(false);
 	const [SelectedContributorId, setSelectedContributorId] = useState(0);
@@ -62,11 +61,6 @@ function StudyDetails() {
 
 	const addSurvey = () => {
 		setSurveyModalShow(true);
-	};
-	const ShowContributors = (user_id, ongoing_id) => {
-		setSelectedContributorId(user_id);
-		setSelected_ongoing_id(ongoing_id);
-		setContributorsmodalShow(true);
 	};
 	const addAudiance = async () => {
 		setAudiences((prevState) => [
@@ -397,12 +391,12 @@ function StudyDetails() {
 	}
 
 	async function isSurveyCompleted(user_id, survey_id) {
-
-		let all_completed_surveys = await contract.getAllCompletedSurveysIDByUser(Number(user_id)).call();
+		let completed_survey_tables = base("completed_surveys");
+		let all_completed_surveys =await ( completed_survey_tables.select({filterByFormula:"{study_id} = '"+ params.id +"'"})).firstPage()
 
 		for (let i = 0; i < all_completed_surveys.length; i++) {
-			let completed_survey_element = await contract._completedsurveyMap(Number(all_completed_surveys[i])).call();
-			if (Number(completed_survey_element.study_id) === Number(params.id) && Number(completed_survey_element.survey_id) == Number(survey_id)) {
+			let completed_survey_element = all_completed_surveys[i].fields;
+			if ( (completed_survey_element.survey_id) == (survey_id) && user_id == completed_survey_element.user_id) {
 				return true;
 			}
 
@@ -454,38 +448,28 @@ function StudyDetails() {
 	}
 
 	async function LoadDataContributors() {
-		if (contract !== undefined && contract !== null) {
-			setLoadingContributors(true);
-			let new_contributors = [];
-			setContributors([]);
+		setLoadingContributors(true);
+		let new_contributors = [];
+		setContributors([]);
+		let ongoingStudiesTable = base("ongoing_studies");
+		let filterByFormula = `{study_id} = '${params.id}'`
+		let allUsers = await ongoingStudiesTable.select({filterByFormula:filterByFormula}).firstPage();
 
-			for (let i = 0; i < Number(await contract._OngoingIds().call()); i++) {
-				const element = await contract._ongoingMap(i).call();
-				const user_element = await contract.getUserDetails(Number(element.user_id)).call();
-				const fhir_element = await contract._fhirMap(Number(element.user_id)).call();
-				if (Number(element.study_id) === parseInt(params.id)) {
-					new_contributors.push({
-						id: i,
-						user_id: Number(element.user_id),
-						name: user_element[2],
-						image: user_element[0],
-						family_name: fhir_element.family_name,
-						givenname: fhir_element.given_name,
-						identifier: fhir_element.identifier,
-						phone: fhir_element.phone,
-						gender: fhir_element.gender,
-						about: fhir_element.about,
-						patient_id: fhir_element.patient_id,
-						joined: element.date
-					}
-					);
-				}
+		for (let i = 0; i < Number(allUsers.length); i++) {
+
+			const element = allUsers[i].fields;
+		
+			new_contributors.push({
+				id: i,
+				user_id: (element.user_id),
+				joined: element.date
 			}
-			setContributors(new_contributors);
-
-			setLoadingContributors(false);
-			return new_contributors;
+			);
 		}
+		setContributors(new_contributors);
+
+		setLoadingContributors(false);
+		return new_contributors;
 	}
 
 	async function AddAge() {
@@ -1270,7 +1254,7 @@ function StudyDetails() {
 							<tbody>
 								{contributors.length !== 0 ? (
 									<>
-										{contributors.map(({ id, user_id, name, identifier, patient_id, joined }, index) => {
+										{contributors.map(({ id, user_id,  joined }, index) => {
 											const IS_LAST = index === data.length - 1;
 											return (
 												<tr key={id} className={`border-b-gray-400 ${!IS_LAST ? "border-b" : "border-0"}`}>
@@ -1343,14 +1327,6 @@ function StudyDetails() {
 					LoadDataSurvey();
 				}}
 				Tiralid={params.id}
-			/>
-			<ViewControbutiors
-				show={ContributorsmodalShow}
-				onHide={() => {
-					setContributorsmodalShow(false);
-				}}
-				setShow={setContributorsmodalShow}
-				id={Selected_ongoing_id}
 			/>
 		</>
 	);

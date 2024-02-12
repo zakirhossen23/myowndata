@@ -140,6 +140,10 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
    
     final SurveysTable = base('surveys');
     var surveydata = await SurveysTable.find(SurveyId);
+    await SurveysTable.update(SurveyId,{
+      "submission": surveydata["submission"] + 1,
+      "date":DateTime.now().toIso8601String(),
+    });
     final UsersTable = base('users');
     var userdata = await UsersTable.find(userId);
     int credits = (userdata['credits'] + surveydata['reward']);
@@ -153,6 +157,8 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
       "survey_id":SurveyId,
       "date":DateTime.now().toIso8601String(),
     });
+
+
 
     Future.delayed(const Duration(milliseconds: 1500), () async {
       Navigator.of(context).pop();

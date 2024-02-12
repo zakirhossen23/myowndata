@@ -9,7 +9,7 @@ function Studies() {
 	const [data, setData] = useState([]);
 	const [CreatemodalShow, setModalShow] = useState(false);
 	const [Loading, setLoading] = useState(true);
-    const {base} = useDBContext();
+	const { base } = useDBContext();
 	const addStudy = () => {
 		setModalShow(true);
 	};
@@ -20,24 +20,32 @@ function Studies() {
 	});
 
 	async function LoadData() {
-		if (!isLoadingData ) {
+		if (!isLoadingData) {
 			isLoadingData = true;
 			setLoading(true);
 			const studiesTable = base('studies');
 
 			const records = await studiesTable.select().all();
-	
-			const newData = records.map(record => ({
-				id: record.id,
-				title: record.get('title'),
-				image: record.get('image'),
-				description: record.get('description'),
-				contributors: record.get('contributors'),
-				audience: record.get('audience'),
-				budget: record.get('budget'),
-				rewardtype: record.get('rewardtype')
-			}));
-	
+			const studyDataTable = base('study_data');
+
+
+			
+			const newData = records.map( (record) => {
+				
+
+				return({
+
+					id: record.id,
+					title: record.get('title'),
+					image: record.get('image'),
+					description: record.get('description'),
+					contributors: record.get('contributors'),
+					audience: record.get('audience'),
+					budget: record.get('budget'),
+					rewardtype: record.get('rewardtype')
+				})
+			});
+
 			setData(newData);
 			isLoadingData = false;
 			setLoading(false);

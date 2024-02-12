@@ -171,6 +171,13 @@ export function DBProvider({ children }) {
                 audiences: audience_info
             });
         }
+
+        const studyTable = base('studies');
+
+        studyTable.update(studyId,{
+            "audience":JSON.parse(audience_info).length
+        });
+
     }
 
 
