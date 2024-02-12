@@ -27,6 +27,7 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
   TextEditingController SexTXT = new TextEditingController(text: null);
   TextEditingController PhoneTXT = new TextEditingController();
   TextEditingController DiseaseTXT = new TextEditingController();
+  TextEditingController ImageTXT = new TextEditingController(text: "");
 
   bool isLoading = false;
 
@@ -72,6 +73,31 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
       );
     }
 
+    void UpdateImage() async {
+      Navigator.pop(context);
+    }
+
+    imagePickerOption(BuildContext context) async {
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Image url'),
+              content: TextField(
+                controller: ImageTXT,
+                decoration: const InputDecoration(
+                    hintText: "https://image.com/example.png"),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('SUBMIT'),
+                  onPressed: UpdateImage,
+                )
+              ],
+            );
+          });
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -81,7 +107,7 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: size.height / 8,
+                height: 50,
               ),
               IndexedStack(index: feelingViewmodel.selectedIndex, children: [
                 Column(
@@ -96,6 +122,55 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
                               fontSize: 24,
                               color: Colors.black,
                               fontWeight: FontWeight.w600)),
+                    ),
+                    Container(
+                      height: 150,
+                      width: 150,
+                      padding: EdgeInsets.all(12),
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(200.0),
+                          color: Colors.white),
+                      child: Stack(
+                        children: [
+                          Container(
+                            child: Wrap(
+                              children: [
+                                Image.network(
+                                    ImageTXT.text == ""
+                                        ? "https://i.postimg.cc/SsxGw5cZ/person.jpg"
+                                        : ImageTXT.text,
+                                    width: size.width,
+                                    fit: BoxFit.fill)
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 5,
+                            right: 5,
+                            child: GestureDetector(
+                                onTap: () {
+                                  imagePickerOption(context);
+                                },
+                                child: Container(
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      width: 4,
+                                      color: Color(0xFFF06129),
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  child: const Icon(
+                                    Icons.edit,
+                                    color: Color(0xFFF06129),
+                                  ),
+                                )),
+                          )
+                        ],
+                      ),
                     ),
                     Container(
                       margin: const EdgeInsets.only(left: 24, right: 24),
@@ -191,7 +266,7 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       GestureDetector(
                         onTap: () async {
-                           FinishWork();
+                          FinishWork();
                         },
                         child: Material(
                           borderRadius: BorderRadius.circular(8),

@@ -62,7 +62,7 @@ class AuthScreenApp extends State<AuthScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => GetStudyIDScreen(),
+          builder: (context) => ConnectDataScreen(),
         ),
       );
       print(prefs.getString("userid"));
