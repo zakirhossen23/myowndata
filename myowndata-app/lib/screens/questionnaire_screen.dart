@@ -52,8 +52,9 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
 
     var filterByFormula = ' {survey_id} = \'${SurveyId}\'';
 
-    final allSect =
-        await SurveyCategoriesTable.select(filterBy: filterByFormula);
+    final allSect = jsonDecode(
+        (await SurveyDataTable.select(filterBy: filterByFormula))[0]
+            ['sections']);
 
     setState(() {
       for (var i = 0; i < allCT.length; i++) {
@@ -136,18 +137,21 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
     setState(() {
       isloading = true;
     });
-    final prefs = await SharedPreferences.getInstance();
-    String surveyid = prefs.getString("surveyid").toString();
-    int userid = int.parse(prefs.getString("userid").toString());
-    int studyid = int.parse(allSections[0]['studyid']);
+   
+    final SurveysTable = base('surveys');
+    var surveydata = await SurveysTable.find(SurveyId);
+    final UsersTable = base('users');
+    var userdata = await UsersTable.find(userId);
+    int credits = (userdata['credits'] + surveydata['reward']);
 
-    var url = Uri.parse(
-        'http://localhost:8080/api/POST/Study/Survey/CreateCompletedSurvey');
-    await http.post(url, headers: POSTheader, body: {
-      'surveyid': surveyid.toString(),
-      'userid': userid.toString(),
-      'date': DateTime.now().toIso8601String(),
-      'studyid': studyid.toString()
+    await UsersTable.update(userId, {"credits": credits});
+
+    final CompletedSurveysTable = base('completed_surveys');
+    await CompletedSurveysTable.create({
+      "study_id":StudyId,
+      "user_id":userId,
+      "survey_id":SurveyId,
+      "date":DateTime.now().toIso8601String(),
     });
 
     Future.delayed(const Duration(milliseconds: 1500), () async {
@@ -239,10 +243,8 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
                             top: 0, left: 24, right: 24, bottom: 24),
                         child: GestureDetector(
                           onTap: () async {
-                            setState(() {
-                              isloading = true;
-                            });
-                            await SaveData(e['sectionid']);
+                           
+                            // await SaveData(e['sectionid']);
                             questionnaireViewmodel.updateIndex(
                                 questionnaireViewmodel.selectedIndex + 1);
                           },
