@@ -27,6 +27,7 @@ class _WearablesScreenState extends ConsumerState<WearablesScreen> {
     GetAccountData();
   }
 
+String domain = "https://8080-mdzakirhossen-myowndata-3z45nv28m2z.ws-us108.gitpod.io";
   int userid = 0;
   String AccountTokenAddress = "";
   bool hasDevice = false;
@@ -88,7 +89,7 @@ class _WearablesScreenState extends ConsumerState<WearablesScreen> {
 
   Future<void> GetTokenAddress() async {
     var url = Uri.parse(
-        'http://localhost:8080/api/GET/getUserDetails?userid=${userid}');
+        domain +'/api/GET/getUserDetails?userid=${userid}');
     final response = await http.get(url);
     var responseData = json.decode(response.body);
 
@@ -101,7 +102,7 @@ class _WearablesScreenState extends ConsumerState<WearablesScreen> {
 
   Future<void> generateLoginLink() async {
     var url = Uri.parse(
-        'http://localhost:8080/api/GET/Wearable/getSourceLink?userid=${userid}');
+        domain + '/api/GET/Wearable/getSourceLink?userid=${userid}');
     final response = await http.get(url);
     var responseData = json.decode(response.body);
 
@@ -120,7 +121,7 @@ class _WearablesScreenState extends ConsumerState<WearablesScreen> {
         DateTime.now().year, DateTime.now().month, DateTime.now().day - 1));
 
     var url = Uri.parse(
-        'http://localhost:8080/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/dailyDynamicValues&token=${this.AccountTokenAddress}&body_startDay=${startDate}&body_endDay=${endDate}&body_valueTypes=3001');
+        domain + '/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/dailyDynamicValues&token=${this.AccountTokenAddress}&body_startDay=${startDate}&body_endDay=${endDate}&body_valueTypes=3001');
     final response = await http.get(url);
     var responseData = json.decode(response.body);
     var parsed = json.decode(responseData['value']);
@@ -157,9 +158,9 @@ class _WearablesScreenState extends ConsumerState<WearablesScreen> {
     // var startDate = DateFormat('yyyy-MM-dd').format(new DateTime(2023, 01, 11));
     // var endDate = DateFormat('yyyy-MM-dd').format(new DateTime(2023,01, 17));
     // var url = Uri.parse(
-    //     'http://localhost:8080/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/dailyDynamicValues&token=${this.AccountTokenAddress}&body_startDay=${startDate}&body_endDay=${endDate}&body_valueTypes=2002,2003,2005');
+    //      domain + '/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/dailyDynamicValues&token=${this.AccountTokenAddress}&body_startDay=${startDate}&body_endDay=${endDate}&body_valueTypes=2002,2003,2005');
     var url = Uri.parse(
-        'http://localhost:8080/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/dailyDynamicValues&token=${this.AccountTokenAddress}&body_startDay=${startDate}&body_endDay=${endDate}&body_valueTypes=2001');
+         domain + '/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/dailyDynamicValues&token=${this.AccountTokenAddress}&body_startDay=${startDate}&body_endDay=${endDate}&body_valueTypes=2001');
     final response = await http.get(url);
     var responseData = json.decode(response.body);
     var parsed = json.decode(responseData['value']);
@@ -202,7 +203,7 @@ class _WearablesScreenState extends ConsumerState<WearablesScreen> {
     // var startDate = DateFormat('yyyy-MM-dd').format(new DateTime(2023, 01, 11));
     // var endDate = DateFormat('yyyy-MM-dd').format(new DateTime(2023,01,17));
     var url = Uri.parse(
-        'http://localhost:8080/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/dailyDynamicValues&token=${this.AccountTokenAddress}&body_startDay=${startDate}&body_endDay=${endDate}&body_valueTypes=1000');
+         domain + '/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/dailyDynamicValues&token=${this.AccountTokenAddress}&body_startDay=${startDate}&body_endDay=${endDate}&body_valueTypes=1000');
     final response = await http.get(url);
     var responseData = json.decode(response.body);
     var parsed = json.decode(responseData['value']);
@@ -228,7 +229,7 @@ class _WearablesScreenState extends ConsumerState<WearablesScreen> {
     // var startDate = DateFormat('yyyy-MM-dd').format(new DateTime(2023, 01,11));
     // var endDate = DateFormat('yyyy-MM-dd').format(new DateTime(2023,01,17));
     var url = Uri.parse(
-        'http://localhost:8080/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/dailyDynamicValues&token=${this.AccountTokenAddress}&body_startDay=${startDate}&body_endDay=${endDate}&body_valueTypes=1010');
+         domain + '/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/dailyDynamicValues&token=${this.AccountTokenAddress}&body_startDay=${startDate}&body_endDay=${endDate}&body_valueTypes=1010');
     final response = await http.get(url);
     var responseData = json.decode(response.body);
     var parsed = json.decode(responseData['value']);
@@ -245,7 +246,7 @@ class _WearablesScreenState extends ConsumerState<WearablesScreen> {
 
   Future<dynamic> GetDevices() async {
     var url = Uri.parse(
-        'http://localhost:8080/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/userInformation&token=${this.AccountTokenAddress}');
+         domain + '/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/userInformation&token=${this.AccountTokenAddress}');
     final response = await http.get(url);
     var responseData = json.decode(response.body);
     setState(() {

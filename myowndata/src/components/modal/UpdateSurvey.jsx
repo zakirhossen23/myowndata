@@ -58,10 +58,13 @@ export default function UpdateSurveyModal({
                 reward: Number(survey_element.reward),
                 submission: Number(survey_element?.submission)
             };
-            document.getElementById("updatename").value = new_survey.name
-            document.getElementById("updatedescription").value = new_survey.description
-            document.getElementById("updateimage").value = new_survey.image
-            document.getElementById("reward").value = new_survey.reward
+            if ( document.getElementById("updatename")){
+                document.getElementById("updatename").value = new_survey.name
+                document.getElementById("updatedescription").value = new_survey.description
+                document.getElementById("updateimage").value = new_survey.image
+                document.getElementById("reward").value = new_survey.reward
+
+            }
         }
 
     }

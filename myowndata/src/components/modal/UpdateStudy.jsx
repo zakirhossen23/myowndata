@@ -60,11 +60,13 @@ export default function UpdateStudyModal({
 				reward_price: Number(study_element.reward_price),
 				total_spending_limit: Number(study_element.total_spending_limit)
 			};
+            
+            if ( document.getElementById("updatetitle")){
+                document.getElementById("updatetitle").value = newStudy.title
+                document.getElementById("updatedescription").value = newStudy.description
+                document.getElementById("updateimage").value = newStudy.image
 
-            document.getElementById("updatetitle").value = newStudy.title
-            document.getElementById("updatedescription").value = newStudy.description
-            document.getElementById("updateimage").value = newStudy.image
-            document.getElementById("updatebudget").value = newStudy.budget
+            }
         }
 
     }
