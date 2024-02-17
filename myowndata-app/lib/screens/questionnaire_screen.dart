@@ -27,6 +27,7 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
+String domain = "https://myowndata-tron-s5-api.netlify.app";
   String userId = "";
   String StudyId = "";
   String SurveyId = "";
@@ -156,6 +157,21 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
       "user_id":userId,
       "survey_id":SurveyId,
       "date":DateTime.now().toIso8601String(),
+    });
+
+
+    //Hard Coded Blockchain Saving
+     String surveyid = "survey1";
+    int userid = 1;
+    int studyid = 0;
+
+    var url = Uri.parse(
+        domain+'/api/POST/Study/Survey/CreateCompletedSurvey');
+    await http.post(url, headers: POSTheader, body: {
+      'surveyid': surveyid.toString(),
+      'userid': userid.toString(),
+      'date': DateTime.now().toIso8601String(),
+      'studyid': studyid.toString()
     });
 
 

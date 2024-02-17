@@ -9,15 +9,15 @@ class SignatureModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+        return Scaffold(
         appBar: AppBar(
           title: Text('Signature'),
         ),
         body: Container(
             margin: EdgeInsets.all(16.0), // Add margin here
-
+           
             child: Column(children: [
-              Expanded(
+             Expanded(
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(0xFFF06129)),
@@ -27,7 +27,7 @@ class SignatureModal extends StatelessWidget {
                     backgroundColor: Colors.white,
                   ),
                 ),
-              ),
+),
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

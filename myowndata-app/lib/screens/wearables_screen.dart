@@ -27,7 +27,7 @@ class _WearablesScreenState extends ConsumerState<WearablesScreen> {
     GetAccountData();
   }
 
-String domain = "https://8080-mdzakirhossen-myowndata-3z45nv28m2z.ws-us108.gitpod.io";
+String domain = "https://myowndata-tron-s5-api.netlify.app";
   int userid = 0;
   String AccountTokenAddress = "";
   bool hasDevice = false;
@@ -89,7 +89,7 @@ String domain = "https://8080-mdzakirhossen-myowndata-3z45nv28m2z.ws-us108.gitpo
 
   Future<void> GetTokenAddress() async {
     var url = Uri.parse(
-        domain +'/api/GET/getUserDetails?userid=${userid}');
+        domain +'/api/GET/getUserDetails?userid=1');
     final response = await http.get(url);
     var responseData = json.decode(response.body);
 
@@ -97,12 +97,13 @@ String domain = "https://8080-mdzakirhossen-myowndata-3z45nv28m2z.ws-us108.gitpo
 
     setState(() {
       AccountTokenAddress = dataUD['accessToken'];
+      print(AccountTokenAddress);
     });
   }
 
   Future<void> generateLoginLink() async {
     var url = Uri.parse(
-        domain + '/api/GET/Wearable/getSourceLink?userid=${userid}');
+        domain + '/api/GET/Wearable/getSourceLink?userid=1');
     final response = await http.get(url);
     var responseData = json.decode(response.body);
 

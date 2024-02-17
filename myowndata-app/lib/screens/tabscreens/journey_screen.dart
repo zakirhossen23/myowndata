@@ -47,6 +47,7 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen> {
     isloading = status;
   }
 
+
   Future<void> GetOngoingData() async {
     UpdateLoading(true);
     final InformedConsentTable = base('informed_consents');
@@ -58,20 +59,37 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen> {
       //Informed Consent
       setState(() {supportStatus['level1'] = true;});
     }
-// setState(() {
-//         //Surveys
-//         var SurveyAllElement = decoded_data['Survey'];
-//         var SurveyAllCompletedElement = decoded_data['Completed'];
 
-//         for (var i = 0; i < SurveyAllElement.length; i++) {
-//           var SurveyElement = SurveyAllElement[i];
-//           var completedSurvey = SurveyAllCompletedElement.where(
-//               (e) => e['survey_id'] == SurveyElement['id']);
-//           if (completedSurvey.length > 0) {
-//             supportStatus['level2'] = true;
-//           }
-//         }
-//       });
+      final SurvyesTable = base('surveys');
+
+      filterByFormula = ' {study_id} = \'${StudyId}\'';
+      final surveys_records =
+          await SurvyesTable.select(filterBy: (filterByFormula));
+      //Surveys
+      var SurveyAllElement = surveys_records;
+      // var SurveyAllCompletedElement = decoded_data['Completed'];
+      final CompletedSurvyesTable = base('completed_surveys');
+      filterByFormula =
+          'AND({study_id} = \'${StudyId}\',{user_id} = \'${userid}\')';
+      var SurveyAllCompletedElement =
+          await CompletedSurvyesTable.select(filterBy: filterByFormula);
+
+      int totalcredit = 0;
+
+      //Other ongoing surveys
+      for (var i = 0; i < SurveyAllElement.length; i++) {
+        var SurveyElement = SurveyAllElement[i];
+        var completedSurvey = SurveyAllCompletedElement.where(
+            (e) => e['survey_id'] == SurveyElement['id']);
+
+        if (completedSurvey.length > 0) {
+           setState(() {
+           supportStatus['level2'] = true;
+           });
+        }
+      }
+    
+    
     UpdateLoading(false);
   }
 

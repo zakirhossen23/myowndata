@@ -395,8 +395,7 @@ class _InformConsentState extends State<InformConsent> {
 
         return SingleChildScrollView(
             controller: _scrollController,
-            child: Expanded(
-              child: Column(
+            child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
@@ -436,7 +435,7 @@ class _InformConsentState extends State<InformConsent> {
                           child: Text(""),
                         ))
                   ]),
-            ));
+            );
       }).toList());
       var allDeclerationOfConsent = [
         Question(
@@ -1032,12 +1031,11 @@ class _QuestionWidget extends State<QuestionWidget> {
           GetUrlView(),
           Container(
             margin: const EdgeInsets.only(left: 24, right: 24),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Expanded(
+            child: Expanded(
                 child: Text(
                   subject.ages_ans!.answer
                       .replaceAll("{patient_name}", UserName),
-                  textAlign: TextAlign.left,
+                  textAlign: TextAlign.justify,
                   style: GoogleFonts.getFont('Lexend Deca',
                       color: const Color(0xFF423838),
                       fontSize: 14,
@@ -1045,7 +1043,6 @@ class _QuestionWidget extends State<QuestionWidget> {
                       fontWeight: FontWeight.w400),
                 ),
               ),
-            ]),
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
@@ -1175,9 +1172,7 @@ class _QuestionWidget extends State<QuestionWidget> {
             ),
           ),
           GetUrlView(),
-          Container(
-            margin: const EdgeInsets.only(left: 24, right: 24),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Expanded(
                 child: Text(
                   subject.ages_ans!.answer,
@@ -1190,7 +1185,6 @@ class _QuestionWidget extends State<QuestionWidget> {
                 ),
               ),
             ]),
-          ),
           Container(
               margin: const EdgeInsets.only(top: 10, bottom: 24),
               padding: const EdgeInsets.only(left: 24, right: 24),
@@ -1354,8 +1348,7 @@ class _QuestionWidget extends State<QuestionWidget> {
       ]);
     }
 
-    return Expanded(
-        child: Column(children: [
+    return Column(children: [
       Container(
         margin: const EdgeInsets.only(top: 24, bottom: 24),
         padding: const EdgeInsets.only(left: 48, right: 48),
@@ -1411,6 +1404,6 @@ class _QuestionWidget extends State<QuestionWidget> {
           ),
         ]),
       ),
-    ]));
+    ]);
   }
 }

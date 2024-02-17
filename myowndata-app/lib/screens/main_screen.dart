@@ -10,18 +10,9 @@ import 'package:myowndata/screens/tabscreens/home_screen.dart';
 import 'package:myowndata/screens/tabscreens/journey_screen.dart';
 import 'package:myowndata/screens/tabscreens/mydata_screen.dart';
 import 'package:myowndata/screens/tabscreens/credit_screen.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class MainScreen extends ConsumerStatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
-
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _MainScreenState();
-}
-
-late TabController controller;
-
-class _MainScreenState extends ConsumerState<MainScreen>
-    with SingleTickerProviderStateMixin {
+class MainScreen extends  ConsumerWidget {
   final widgets = [
     //home
     HomeScreen(),
@@ -37,20 +28,9 @@ class _MainScreenState extends ConsumerState<MainScreen>
   ];
 
   @override
-  initState() {
-    super.initState();
-    controller = TabController(length: widgets.length, vsync: this, animationDuration: Duration(microseconds: 0));
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var navbarViewmodel = ref.watch(navbarProvider);
+
     Future<void> Logout() async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove("userid");
@@ -64,12 +44,12 @@ class _MainScreenState extends ConsumerState<MainScreen>
 
     return Scaffold(
       bottomNavigationBar: MyOwnDataNavbar((int newIndex) {
-        controller.index = newIndex;
+        
         navbarViewmodel.updateIndex(newIndex);
       }),
-      body: TabBarView(
+      body: IndexedStack(
         children: widgets,
-        controller: controller,
+        index: navbarViewmodel.selectedIndex,
       ),
     );
   }

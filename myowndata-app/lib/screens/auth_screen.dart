@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:myowndata/components/signature_modal.dart';
 import 'package:myowndata/screens/connect_data.dart';
 import 'package:myowndata/screens/informedconsent_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -57,7 +58,7 @@ class AuthScreenApp extends State<AuthScreen> {
       var userid = records[0]['id'];
 
       final prefs = await SharedPreferences.getInstance();
-
+ 
       prefs.setString("userid", userid);
       Navigator.pushReplacement(
         context,
