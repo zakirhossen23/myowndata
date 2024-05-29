@@ -196,16 +196,17 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     });
 
     await Future.delayed(Duration(seconds: 2));
-
-    Navigator.pushReplacement(
+      setState(() {
+      isloading = false;
+    });
+    await Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => ConnectDataScreen(),
       ),
     );
-    setState(() {
-      isloading = false;
-    });
+
+  
   }
 
   @override
@@ -394,48 +395,46 @@ class _InformConsentState extends State<InformConsent> {
         TextEditingController AnswerBox = new TextEditingController();
 
         return SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 48, right: 48, top: 40),
-                      child: Text(study_title,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.getFont('Lexend Deca',
-                              color: Color(0xFF423838),
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700)),
-                    ),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    Container(
-                      width: size.width,
-                      margin: const EdgeInsets.only(left: 16, right: 16),
-                      padding: const EdgeInsets.only(bottom: 12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: const Color(
-                          0xFFFEE4CA,
-                        ),
-                      ),
-                      child: QuestionWidget(
-                        subject: e,
-                        size: size,
-                        UserName: UserName,
-                      ),
-                    ),
-                    Visibility(
-                        visible: questionnaireViewmodel.selectedIndex > 0 &&
-                            questionnaireViewmodel.selectedIndex <
-                                subjects.length + 1,
-                        child: Container(
-                          height: 100,
-                          child: Text(""),
-                        ))
-                  ]),
-            );
+          controller: _scrollController,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Container(
+              margin: EdgeInsets.only(left: 48, right: 48, top: 40),
+              child: Text(study_title,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.getFont('Lexend Deca',
+                      color: Color(0xFF423838),
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700)),
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            Container(
+              width: size.width,
+              margin: const EdgeInsets.only(left: 16, right: 16),
+              padding: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: const Color(
+                  0xFFFEE4CA,
+                ),
+              ),
+              child: QuestionWidget(
+                subject: e,
+                size: size,
+                UserName: UserName,
+              ),
+            ),
+            Visibility(
+                visible: questionnaireViewmodel.selectedIndex > 0 &&
+                    questionnaireViewmodel.selectedIndex < subjects.length + 1,
+                child: Container(
+                  height: 100,
+                  child: Text(""),
+                ))
+          ]),
+        );
       }).toList());
       var allDeclerationOfConsent = [
         Question(
@@ -624,7 +623,6 @@ class _InformConsentState extends State<InformConsent> {
             GestureDetector(
               onTap: () async {
                 await FinishIC();
-                _scrollToTop();
               },
               child: Material(
                 borderRadius: BorderRadius.circular(8),
@@ -1032,17 +1030,16 @@ class _QuestionWidget extends State<QuestionWidget> {
           Container(
             margin: const EdgeInsets.only(left: 24, right: 24),
             child: Expanded(
-                child: Text(
-                  subject.ages_ans!.answer
-                      .replaceAll("{patient_name}", UserName),
-                  textAlign: TextAlign.justify,
-                  style: GoogleFonts.getFont('Lexend Deca',
-                      color: const Color(0xFF423838),
-                      fontSize: 14,
-                      letterSpacing: 0.82,
-                      fontWeight: FontWeight.w400),
-                ),
+              child: Text(
+                subject.ages_ans!.answer.replaceAll("{patient_name}", UserName),
+                textAlign: TextAlign.justify,
+                style: GoogleFonts.getFont('Lexend Deca',
+                    color: const Color(0xFF423838),
+                    fontSize: 14,
+                    letterSpacing: 0.82,
+                    fontWeight: FontWeight.w400),
               ),
+            ),
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
@@ -1172,19 +1169,19 @@ class _QuestionWidget extends State<QuestionWidget> {
             ),
           ),
           GetUrlView(),
-         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Expanded(
-                child: Text(
-                  subject.ages_ans!.answer,
-                  textAlign: TextAlign.left,
-                  style: GoogleFonts.getFont('Lexend Deca',
-                      color: const Color(0xFF423838),
-                      fontSize: 14,
-                      letterSpacing: 0.82,
-                      fontWeight: FontWeight.w400),
-                ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Expanded(
+              child: Text(
+                subject.ages_ans!.answer,
+                textAlign: TextAlign.left,
+                style: GoogleFonts.getFont('Lexend Deca',
+                    color: const Color(0xFF423838),
+                    fontSize: 14,
+                    letterSpacing: 0.82,
+                    fontWeight: FontWeight.w400),
               ),
-            ]),
+            ),
+          ]),
           Container(
               margin: const EdgeInsets.only(top: 10, bottom: 24),
               padding: const EdgeInsets.only(left: 24, right: 24),

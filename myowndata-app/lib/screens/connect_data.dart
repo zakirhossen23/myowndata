@@ -62,14 +62,13 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
         await UsersTable.update(userid!, {"image": ImageTXT.text});
       } catch (e) {}
       setState(() => isLoading = false);
-       Navigator.push(
+       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => OnboardingQuestionnaireScreen(),
         )
       );
 
-      return;
     }
 
     void UpdateImage() async {

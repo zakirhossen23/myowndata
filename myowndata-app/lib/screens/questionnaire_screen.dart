@@ -160,21 +160,6 @@ String domain = "https://myowndata-tron-s5-api.netlify.app";
     });
 
 
-    //Hard Coded Blockchain Saving
-     String surveyid = "survey1";
-    String userid = "";
-    String studyid = "";
-
-    var url = Uri.parse(
-        domain+'/api/POST/Study/Survey/CreateCompletedSurvey');
-    await http.post(url, headers: POSTheader, body: {
-      'surveyid': surveyid.toString(),
-      'userid': userid.toString(),
-      'date': DateTime.now().toIso8601String(),
-      'studyid': studyid.toString()
-    });
-
-
 
     Future.delayed(const Duration(milliseconds: 1500), () async {
       Navigator.of(context).pop();

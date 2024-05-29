@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,6 +16,7 @@ import 'package:myowndata/screens/get_ready.dart';
 import 'package:myowndata/screens/study_id_screen.dart';
 import 'package:myowndata/screens/main_screen.dart';
 import 'package:myowndata/model/airtable_api.dart';
+import 'package:signature/signature.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -42,14 +44,14 @@ class AuthScreenApp extends State<AuthScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => MainScreen(),
+          builder: (context) => OnboardingQuestionnaireScreen(),
         ),
       );
     }
   }
 
   Future<void> LoginAccount() async {
-  
+ 
      if (emailTXT.text == "" || passwordTXT.text == ""){
       ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

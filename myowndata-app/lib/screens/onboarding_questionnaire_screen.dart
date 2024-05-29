@@ -30,53 +30,51 @@ class _OnboardingQuestionnaireScreenState
   };
   String domain = "https://myowndata-tron-s5-api.netlify.app";
   String userid = "";
-  String StudyId = "";
   var allQuestions = [
-    Question(
-        id: "1",
-        content: "Which form of sickle cell disease do you have?",
-        questionid: "1",
-        QuestionType: "tick",
-        QuestionType2: "tick",
-        Answer: "",
-        AnswerOptions: [
-          "HbSS",
-          "HbSC, HbSβ0",
-          "thalassemia, HbSβ+ thalassemia",
-          "I don’t know"
-        ]),
-    Question(
-        id: "2",
-        content: "How many crises did you have in the last 12 months?",
-        questionid: "2",
-        QuestionType: "tick",
-        QuestionType2: "tick",
-        Answer: "",
-        AnswerOptions: ["0", "1", "2", "3", "4", "5", ">5"]),
-    Question(
-        id: "3",
-        content: "How often have you been hospitalized for a crisis?",
-        questionid: "3",
-        QuestionType: "tick",
-        QuestionType2: "tick",
-        Answer: "",
-        AnswerOptions: ["0", "1", "2", "3", "4", "5", ">5"]),
-    Question(
-        id: "4",
-        content:
-            "How many times did you receive a blood-transfusion in the last 6 months?",
-        questionid: "4",
-        QuestionType: "tick",
-        QuestionType2: "tick",
-        Answer: "",
-        AnswerOptions: ["0", "1", "2", "3", "4", "5", ">5"])
-  ];
+      Question(
+          id: "1",
+          content: "Which form of sickle cell disease do you have?",
+          questionid: "1",
+          QuestionType: "tick",
+          QuestionType2: "tick",
+          Answer: "",
+          AnswerOptions: [
+            "HbSS",
+            "HbSC, HbSβ0",
+            "thalassemia, HbSβ+ thalassemia",
+            "I don’t know"
+          ]),
+      Question(
+          id: "2",
+          content: "How many crises did you have in the last 12 months?",
+          questionid: "2",
+          QuestionType: "tick",
+          QuestionType2: "tick",
+          Answer: "",
+          AnswerOptions: ["0", "1", "2", "3", "4", "5", ">5"]),
+      Question(
+          id: "3",
+          content: "How often have you been hospitalized for a crisis?",
+          questionid: "3",
+          QuestionType: "tick",
+          QuestionType2: "tick",
+          Answer: "",
+          AnswerOptions: ["0", "1", "2", "3", "4", "5", ">5"]),
+      Question(
+          id: "4",
+          content:
+              "How many times did you receive a blood-transfusion in the last 6 months?",
+          questionid: "4",
+          QuestionType: "tick",
+          QuestionType2: "tick",
+          Answer: "",
+          AnswerOptions: ["0", "1", "2", "3", "4", "5", ">5"])
+    ];
 
   bool isloading = true;
   Future<void> GetData() async {
     final prefs = await SharedPreferences.getInstance();
-    userid = (prefs.getString("userid").toString());
-    StudyId = (prefs.getString("studyid").toString());
+    userid = prefs.getString("userid").toString();
     setState(() {
       isloading = false;
     });
@@ -107,7 +105,7 @@ class _OnboardingQuestionnaireScreenState
     setState(() {
       isloading = true;
     });
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => MainScreen(),
@@ -120,29 +118,26 @@ class _OnboardingQuestionnaireScreenState
 
   @override
   initState() {
-    GetData();
     super.initState();
+    GetData();
   }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var questionnaireViewmodel = ref.watch(questionnaireProvider);
-
+  
     Widget renderSections() {
       return Column(
         children: [
-          SizedBox(
-            height: 50,
-          ),
           Stack(
             alignment: Alignment.bottomCenter,
             children: [
               Container(
                 width: size.width,
-                height: size.height - size.height / 5,
+                height: size.height - size.height / 9,
                 child: ListView.builder(
-                  padding: const EdgeInsets.only(top: 80),
+                  padding: const EdgeInsets.only(bottom: 40),
                   itemCount: allQuestions.length,
                   itemBuilder: ((context, index) => QuestionWidget(
                         question: allQuestions[index],
@@ -209,7 +204,7 @@ class _OnboardingQuestionnaireScreenState
               : [
                   isloading == false
                       ? const SizedBox(
-                          height: 40,
+                          height: 80,
                         )
                       : const Text(""),
                   IndexedStack(
