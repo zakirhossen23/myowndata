@@ -7,6 +7,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:myowndata/components/signature_modal.dart';
 import 'package:myowndata/screens/connect_data.dart';
 import 'package:myowndata/screens/informedconsent_screen.dart';
+import 'package:myowndata/screens/onboarding_questionnaire_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myowndata/components/data_edit_item.dart';
 import 'package:myowndata/components/register_modal.dart';
@@ -37,7 +38,6 @@ class AuthScreenApp extends State<AuthScreen> {
   Future<void> GetAccount() async {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
-    print(prefs.getString("userid"));
     if (prefs.getString("userid") != "" && prefs.getString("userid") != null) {
       Navigator.pushReplacement(
         context,
@@ -49,6 +49,16 @@ class AuthScreenApp extends State<AuthScreen> {
   }
 
   Future<void> LoginAccount() async {
+  
+     if (emailTXT.text == "" || passwordTXT.text == ""){
+      ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content:
+                        Text("Please fill all fields!")));
+          setState(() => isLoading = true);
+          return;
+     }
+      
     final usersTable = base('users');
     var filterByFormula =
         ' AND({email} = \'${emailTXT.text}\', {password} = \'${passwordTXT.text}\')';
@@ -161,12 +171,7 @@ class AuthScreenApp extends State<AuthScreen> {
                         child: GestureDetector(
                           onTap: () async {
                             if (isLoading) return;
-                            if (emailTXT.text == "" || passwordTXT.text == "")
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content:
-                                          Text("Please fill all fields!")));
-                            setState(() => isLoading = true);
+                           
                             await LoginAccount();
                           },
                           child: Material(

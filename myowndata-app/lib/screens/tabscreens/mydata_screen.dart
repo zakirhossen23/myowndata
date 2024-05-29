@@ -530,87 +530,87 @@ class _MyDataScreenState extends ConsumerState<MyDataScreen> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.90,
-                            decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 238, 238, 238),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    10, 7, 18, 5),
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                          child: MouseRegion(
-                                              cursor: SystemMouseCursors.click,
-                                              child: GestureDetector(
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(5,
-                                                                      5, 5, 5),
-                                                          child: Text(
-                                                            'About',
-                                                            style: GoogleFonts
-                                                                .getFont(
-                                                              'Lexend',
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              fontSize: 18,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Expanded(
-                                                          child: Text(
-                                                            PatientDetails[
-                                                                    'disease']
-                                                                .toString(),
-                                                            style: GoogleFonts
-                                                                .getFont(
-                                                              'Lexend Deca',
-                                                              fontSize: 14,
-                                                            ),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                                onTap: () async {
-                                                  setState(() {
-                                                    boolAbout = !boolAbout;
-                                                  });
-                                                },
-                                              ))),
-                                      Checkbox(
-                                        value: boolAbout,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            boolAbout = value!;
-                                          });
-                                        },
-                                      ),
-                                    ])),
-                          ),
-                        ),
-                        GestureDetector(
+                        // Padding(
+                        //   padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                        //   child: Container(
+                        //     width: MediaQuery.of(context).size.width * 0.90,
+                        //     decoration: BoxDecoration(
+                        //       color: Color.fromARGB(255, 238, 238, 238),
+                        //       borderRadius: BorderRadius.circular(10),
+                        //     ),
+                        //     child: Padding(
+                        //         padding: EdgeInsetsDirectional.fromSTEB(
+                        //             10, 7, 18, 5),
+                        //         child: Row(
+                        //             mainAxisAlignment: MainAxisAlignment.start,
+                        //             crossAxisAlignment:
+                        //                 CrossAxisAlignment.start,
+                        //             children: [
+                        //               Expanded(
+                        //                   child: MouseRegion(
+                        //                       cursor: SystemMouseCursors.click,
+                        //                       child: GestureDetector(
+                        //                         child: Column(
+                        //                           children: [
+                        //                             Row(
+                        //                               children: [
+                        //                                 Padding(
+                        //                                   padding:
+                        //                                       EdgeInsetsDirectional
+                        //                                           .fromSTEB(5,
+                        //                                               5, 5, 5),
+                        //                                   child: Text(
+                        //                                     'About',
+                        //                                     style: GoogleFonts
+                        //                                         .getFont(
+                        //                                       'Lexend',
+                        //                                       color:
+                        //                                           Colors.black,
+                        //                                       fontWeight:
+                        //                                           FontWeight
+                        //                                               .w500,
+                        //                                       fontSize: 18,
+                        //                                     ),
+                        //                                   ),
+                        //                                 ),
+                        //                               ],
+                        //                             ),
+                        //                             Row(
+                        //                               children: [
+                        //                                 Expanded(
+                        //                                   child: Text(
+                        //                                     PatientDetails[
+                        //                                             'disease']
+                        //                                         .toString(),
+                        //                                     style: GoogleFonts
+                        //                                         .getFont(
+                        //                                       'Lexend Deca',
+                        //                                       fontSize: 14,
+                        //                                     ),
+                        //                                   ),
+                        //                                 )
+                        //                               ],
+                        //                             ),
+                        //                           ],
+                        //                         ),
+                        //                         onTap: () async {
+                        //                           setState(() {
+                        //                             boolAbout = !boolAbout;
+                        //                           });
+                        //                         },
+                        //                       ))),
+                        //               Checkbox(
+                        //                 value: boolAbout,
+                        //                 onChanged: (bool? value) {
+                        //                   setState(() {
+                        //                     boolAbout = value!;
+                        //                   });
+                        //                 },
+                        //               ),
+                        //             ])),
+                        //   ),
+                        // ),
+                       GestureDetector(
                             onTap: () async {
                               await GenerateQRCode();
 

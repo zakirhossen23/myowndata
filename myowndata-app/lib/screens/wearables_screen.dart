@@ -28,7 +28,7 @@ class _WearablesScreenState extends ConsumerState<WearablesScreen> {
   }
 
 String domain = "https://myowndata-tron-s5-api.netlify.app";
-  int userid = 0;
+  String userid = "";
   String AccountTokenAddress = "";
   bool hasDevice = false;
   var allDevices = [];
@@ -82,7 +82,7 @@ String domain = "https://myowndata-tron-s5-api.netlify.app";
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userid = int.parse(prefs.getString("userid").toString());
+      userid = (prefs.getString("userid").toString());
     });
     await GetTokenAddress();
   }

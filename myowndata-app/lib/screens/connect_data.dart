@@ -7,6 +7,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:flutter/material.dart';
 import 'package:myowndata/providers/feeling_provider.dart';
+import 'package:myowndata/screens/onboarding_questionnaire_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myowndata/components/data_edit_item.dart';
 import 'package:myowndata/components/data_edit_dropdown.dart';
@@ -56,23 +57,19 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
           "familyname": FamilyNameTXT.text,
           "gender": SexTXT.text,
           "phone": PhoneTXT.text,
-          "about": DiseaseTXT.text
         });
         final UsersTable = base('users');
         await UsersTable.update(userid!, {"image": ImageTXT.text});
       } catch (e) {}
       setState(() => isLoading = false);
-      feelingViewmodel.updateIndex(1);
-      return;
-    }
-
-    void FinishWork() {
-      Navigator.push(
+       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MainScreen(),
-        ),
+          builder: (context) => OnboardingQuestionnaireScreen(),
+        )
       );
+
+      return;
     }
 
     void UpdateImage() async {
@@ -198,13 +195,7 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
                       margin: const EdgeInsets.only(left: 24, right: 24),
                       child: DataEditItem(label: "Phone", controller: PhoneTXT),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(left: 24, right: 24),
-                      child: DataEditItem(
-                          label: "About",
-                          controller: DiseaseTXT,
-                          isFilled: true),
-                    ),
+                  
                     Container(
                       margin:
                           const EdgeInsets.only(top: 0, left: 24, right: 24),
@@ -244,59 +235,7 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
                     ),
                   ],
                 ),
-                Column(
-                  children: [
-                    SizedBox(
-                      height: size.height / 8,
-                    ),
-                    Center(
-                      child: Image.asset(
-                        "assets/images/welldone.gif",
-                        width: 200,
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, top: 40),
-                      child: Text(
-                          "You have filled your personal information. You can now explore your dashboard",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.getFont('Lexend Deca',
-                              color: Color(0xFF423838),
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700)),
-                    ),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      GestureDetector(
-                        onTap: () async {
-                          FinishWork();
-                        },
-                        child: Material(
-                          borderRadius: BorderRadius.circular(8),
-                          elevation: 2,
-                          child: Container(
-                            padding: const EdgeInsets.only(
-                                top: 0, left: 10, right: 10, bottom: 0),
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: const Color(0xFFF06129),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Finish",
-                                style: GoogleFonts.getFont('Lexend Deca',
-                                    fontSize: 16, color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ]),
-                  ],
-                )
+              
               ]),
             ],
           ),

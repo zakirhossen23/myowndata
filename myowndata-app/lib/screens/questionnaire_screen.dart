@@ -101,7 +101,7 @@ String domain = "https://myowndata-tron-s5-api.netlify.app";
     });
     final prefs = await SharedPreferences.getInstance();
     String surveyid = prefs.getString("surveyid").toString();
-    int userid = int.parse(prefs.getString("userid").toString());
+    String userid = prefs.getString("userid").toString();
 
     var item = null;
     for (var element in allSections) {
@@ -111,7 +111,7 @@ String domain = "https://myowndata-tron-s5-api.netlify.app";
       ;
     }
 
-    int studyid = int.parse(item['studyid']);
+    String studyid = (item['studyid']);
     var sectionid = item['sectionid'];
     var data = [];
     for (var itemQ in item['questions']) {
@@ -162,8 +162,8 @@ String domain = "https://myowndata-tron-s5-api.netlify.app";
 
     //Hard Coded Blockchain Saving
      String surveyid = "survey1";
-    int userid = 1;
-    int studyid = 0;
+    String userid = "";
+    String studyid = "";
 
     var url = Uri.parse(
         domain+'/api/POST/Study/Survey/CreateCompletedSurvey');

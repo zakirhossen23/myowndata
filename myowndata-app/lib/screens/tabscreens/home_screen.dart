@@ -309,7 +309,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     Future<void> StartStudy(int studyid) async {
       final prefs = await SharedPreferences.getInstance();
-      int userid = int.parse(prefs.getString("userid").toString());
+      String userid = (prefs.getString("userid").toString());
 
       var given_permission = {
         "family": FamilyNameSwitch,
@@ -338,7 +338,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     Future<void> WithdrawAmount(Amount) async {
       final prefs = await SharedPreferences.getInstance();
-      int userid = int.parse(prefs.getString("userid").toString());
+      String userid = (prefs.getString("userid").toString());
 
       var url = Uri.parse(
           'http://localhost:8080/api/POST/Study/Survey/WithdrawAmount');
